@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         const hashedPassword = await bcrypt.hash(validated.password, 12);
 
         // Create user and welcome notification in a transaction
-        const result = await prisma.$transaction(async (tx) => {
+        await prisma.$transaction(async (tx) => {
             const user = await tx.user.create({
                 data: {
                     name: validated.name,
