@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAppStore } from "@/hooks/use-store";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export function Header() {
   const { data: session } = useSession();
@@ -38,13 +39,14 @@ export function Header() {
     setSidebarOpen,
   } = useAppStore();
   const [mounted, setMounted] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => setMounted(true), []);
 
   return (
     <motion.header
       initial={false}
-      animate={{ paddingLeft: sidebarOpen ? 256 : 72 }}
+      animate={{ paddingLeft: isMobile ? 0 : (sidebarOpen ? 256 : 72) }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
       className="fixed top-0 right-0 left-0 z-30 h-16 border-b border-border bg-background/80 backdrop-blur-xl"
     >

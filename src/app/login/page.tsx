@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -19,6 +20,7 @@ export default function LoginPage() {
     try {
       await signIn("credentials", {
         email,
+        password,
         callbackUrl: "/dashboard",
       });
     } finally {
@@ -110,6 +112,18 @@ export default function LoginPage() {
                   required
                 />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-11"
+                required
+              />
             </div>
             <Button type="submit" className="w-full h-11 gap-2" disabled={isLoading}>
               {isLoading ? (

@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Phone,
   Plus,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -36,12 +37,25 @@ export function Sidebar() {
     <TooltipProvider delayDuration={0}>
       <motion.aside
         initial={false}
-        animate={{ width: sidebarOpen ? 256 : 72 }}
+        animate={{ 
+          width: sidebarOpen ? 256 : 72,
+          x: sidebarOpen ? 0 : -256
+        }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="fixed left-0 top-0 z-40 h-screen border-r border-border bg-card/50 backdrop-blur-xl flex flex-col"
+        className={cn(
+          "fixed left-0 top-0 z-50 h-screen border-r border-border bg-card/50 backdrop-blur-xl flex flex-col transition-all",
+          !sidebarOpen && "md:translate-x-0"
+        )}
       >
+        {/* Overlay for mobile when sidebar is open */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 z-[-1] bg-background/80 backdrop-blur-sm md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
         {/* Logo */}
-        <div className="flex items-center h-16 px-4 border-b border-border">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-border">
           <motion.div
             animate={{ opacity: sidebarOpen ? 1 : 0 }}
             className="flex items-center gap-2 overflow-hidden"
@@ -59,6 +73,19 @@ export function Sidebar() {
               </motion.span>
             )}
           </motion.div>
+
+          {/* Mobile close button */}
+          {sidebarOpen && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden h-8 w-8 -mr-1"
+              onClick={() => setSidebarOpen(false)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+
           {!sidebarOpen && (
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto">
               <Briefcase className="h-4 w-4 text-white" />

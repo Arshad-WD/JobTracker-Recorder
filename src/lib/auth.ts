@@ -33,7 +33,9 @@ export const authOptions: NextAuthOptions = {
                 });
 
                 if (!user) {
-                    // If no password provided, auto-create (demo mode)
+                    // If no password provided and no user exists, auto-create (original demo mode)
+                    // However, we should probably check if we want to allow this.
+                    // For now, let's keep it but only for NEW users.
                     if (!credentials.password) {
                         const newUser = await prisma.user.create({
                             data: {
@@ -52,18 +54,18 @@ export const authOptions: NextAuthOptions = {
                 }
 
                 // If user has a password, verify it
-                if (user.hashedPassword && credentials.password) {
+                if (user.hashedPassword) {
+                    if (!credentials.password) return null; // Password required
                     const isValid = await bcrypt.compare(
                         credentials.password,
                         user.hashedPassword
                     );
                     if (!isValid) return null;
-                }
-
-                // If user exists but no password set (e.g., Google user trying email login)
-                // Allow login without password for backward compatibility
-                if (!user.hashedPassword && !credentials.password) {
-                    // allow
+                } else if (credentials.password) {
+                    // User exists but has no password (e.g. Google user)
+                    // If they provided a password, maybe they want to set one?
+                    // For now, just reject since they should use Google or we need a set-password flow
+                    return null;
                 }
 
                 return {

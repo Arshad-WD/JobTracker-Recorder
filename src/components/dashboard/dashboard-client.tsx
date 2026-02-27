@@ -106,7 +106,7 @@ const HeroHeader = memo(({ greeting, analytics, onAdd }: {
     initial={{ opacity: 0, scale: 0.98 }}
     animate={{ opacity: 1, scale: 1 }}
     transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] }}
-    className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] dark:bg-card/40 backdrop-blur-md p-8 md:p-10 premium-gradient shadow-2xl"
+    className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] dark:bg-card/40 backdrop-blur-md p-6 md:p-10 premium-gradient shadow-2xl"
   >
     {/* Animated background element */}
     <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-primary/20 blur-[100px] rounded-full animate-blob" />
@@ -126,7 +126,7 @@ const HeroHeader = memo(({ greeting, analytics, onAdd }: {
       <Button
         onClick={onAdd}
         size="lg"
-        className="h-14 px-8 rounded-2xl gap-3 bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95 text-base font-semibold"
+        className="w-full md:w-auto h-14 px-8 rounded-2xl gap-3 bg-primary hover:bg-primary/90 text-white shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95 text-base font-semibold"
       >
         <Plus className="h-5 w-5" />
         New Application

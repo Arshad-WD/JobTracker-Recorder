@@ -8,13 +8,15 @@ import { CommandPalette } from "@/components/command-palette";
 import { QuickAddModal } from "@/components/applications/quick-add-modal";
 import { QuickSearchMode } from "@/components/search/quick-search-mode";
 import { useAppStore } from "@/hooks/use-store";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const sidebarOpen = useAppStore((s) => s.sidebarOpen);
+  const sidebarOpen = useAppStore((state) => state.sidebarOpen);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <div className="min-h-screen bg-background">
@@ -22,7 +24,7 @@ export default function DashboardLayout({
       <Header />
       <motion.main
         initial={false}
-        animate={{ paddingLeft: sidebarOpen ? 256 : 72 }}
+        animate={{ paddingLeft: isMobile ? 0 : (sidebarOpen ? 256 : 72) }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className="pt-16 min-h-screen"
       >

@@ -75,13 +75,13 @@ export function TableView({ applications, onSelect }: TableViewProps) {
           <thead>
             <tr className="border-b bg-muted/30">
               <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Company</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Position</th>
+              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden md:table-cell">Position</th>
               <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Status</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Platform</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Type</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Salary</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Score</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Applied</th>
+              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden lg:table-cell">Platform</th>
+              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden sm:table-cell">Type</th>
+              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden xl:table-cell">Salary</th>
+              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden md:table-cell">Score</th>
+              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden sm:table-cell">Applied</th>
               <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 w-10"></th>
             </tr>
           </thead>
@@ -111,28 +111,28 @@ export function TableView({ applications, onSelect }: TableViewProps) {
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm">{app.positionTitle}</td>
+                <td className="px-4 py-3 text-sm hidden md:table-cell">{app.positionTitle}</td>
                 <td className="px-4 py-3">
                   <Badge className={getStatusColor(app.status)} variant="outline">
                     {getStatusLabel(app.status)}
                   </Badge>
                 </td>
-                <td className="px-4 py-3 text-sm text-muted-foreground">
+                <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">
                   {getPlatformLabel(app.platform)}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-3 hidden sm:table-cell">
                   <Badge variant="outline" className="text-xs">
                     {getJobTypeLabel(app.jobType)}
                   </Badge>
                 </td>
-                <td className="px-4 py-3 text-sm text-muted-foreground">
+                <td className="px-4 py-3 text-sm text-muted-foreground hidden xl:table-cell">
                   {app.salaryMin && app.salaryMax
                     ? `${formatCurrency(app.salaryMin)} - ${formatCurrency(app.salaryMax)}`
                     : app.salaryMax
                     ? formatCurrency(app.salaryMax)
                     : "-"}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-3 hidden md:table-cell">
                   <div className="flex items-center gap-1.5">
                     <div className="h-2 w-12 rounded-full bg-muted overflow-hidden">
                       <motion.div
@@ -144,7 +144,7 @@ export function TableView({ applications, onSelect }: TableViewProps) {
                     <span className="text-xs text-muted-foreground">{calculateApplicationScore(app)}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm text-muted-foreground">
+                <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">
                   {formatDate(app.appliedDate)}
                 </td>
                 <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
