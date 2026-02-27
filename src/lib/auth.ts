@@ -11,13 +11,17 @@ export const authOptions: NextAuthOptions = {
     session: {
         strategy: "jwt",
     },
+    secret: process.env.NEXTAUTH_SECRET,
     pages: {
         signIn: "/login",
+        error: "/login", // Redirect to login on error
     },
+    debug: process.env.NODE_ENV === "development",
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID ?? "",
             clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+            allowDangerousEmailAccountLinking: true,
         }),
         CredentialsProvider({
             name: "credentials",
@@ -78,6 +82,7 @@ export const authOptions: NextAuthOptions = {
                 session.user.email = token.email;
                 session.user.image = token.picture;
             }
+            console.log(`[AUTH] Session created for user: ${session.user?.email}`);
             return session;
         },
         async jwt({ token, user }) {
