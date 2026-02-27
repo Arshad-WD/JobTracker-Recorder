@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Briefcase } from "lucide-react";
+import { Menu, X, Briefcase, LayoutDashboard } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -13,6 +14,7 @@ const navLinks = [
 ];
 
 export function Navbar() {
+  const { status } = useSession();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -61,18 +63,30 @@ export function Navbar() {
 
             {/* Desktop CTA */}
             <div className="hidden md:flex items-center gap-3">
-              <Link
-                href="/login"
-                className="px-4 py-2 text-sm text-white/70 hover:text-white transition-colors"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/register"
-                className="relative px-5 py-2.5 text-sm font-medium rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all hover:scale-105 active:scale-95"
-              >
-                Get Started Free
-              </Link>
+              {status === "authenticated" ? (
+                <Link
+                  href="/dashboard"
+                  className="relative px-5 py-2.5 text-sm font-medium rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="px-4 py-2 text-sm text-white/70 hover:text-white transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="relative px-5 py-2.5 text-sm font-medium rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 transition-all hover:scale-105 active:scale-95"
+                  >
+                    Get Started Free
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Hamburger */}
@@ -111,22 +125,35 @@ export function Navbar() {
                   {link.label}
                 </motion.a>
               ))}
-              <div className="mt-6 flex flex-col gap-3">
-                <Link
-                  href="/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="w-full py-3 text-center text-white/70 border border-white/10 rounded-xl hover:bg-white/5 transition-colors"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/register"
-                  onClick={() => setMobileOpen(false)}
-                  className="w-full py-3 text-center font-medium rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg"
-                >
-                  Get Started Free
-                </Link>
-              </div>
+                <div className="mt-6 flex flex-col gap-3">
+                  {status === "authenticated" ? (
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                      className="w-full py-3 text-center font-medium rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg flex items-center justify-center gap-2"
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      Go to Dashboard
+                    </Link>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        onClick={() => setMobileOpen(false)}
+                        className="w-full py-3 text-center text-white/70 border border-white/10 rounded-xl hover:bg-white/5 transition-colors"
+                      >
+                        Sign In
+                      </Link>
+                      <Link
+                        href="/register"
+                        onClick={() => setMobileOpen(false)}
+                        className="w-full py-3 text-center font-medium rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg"
+                      >
+                        Get Started Free
+                      </Link>
+                    </>
+                  )}
+                </div>
             </div>
           </motion.div>
         )}
