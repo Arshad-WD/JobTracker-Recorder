@@ -10,55 +10,55 @@ type ViewMode = "table" | "kanban" | "list";
 interface AppState {
     // Applications
     applications: ApplicationWithInterviews[];
-    setApplications: (apps: ApplicationWithInterviews[]) => void;
-    addApplication: (app: ApplicationWithInterviews) => void;
-    updateApplication: (id: string, data: Partial<Application>) => void;
-    removeApplication: (id: string) => void;
+    setApplications: (_apps: ApplicationWithInterviews[]) => void;
+    addApplication: (_app: ApplicationWithInterviews) => void;
+    updateApplication: (_id: string, _data: Partial<Application>) => void;
+    removeApplication: (_id: string) => void;
 
     // View mode
     viewMode: ViewMode;
-    setViewMode: (mode: ViewMode) => void;
+    setViewMode: (_mode: ViewMode) => void;
 
     // Search
     searchQuery: string;
-    setSearchQuery: (query: string) => void;
+    setSearchQuery: (_query: string) => void;
     isQuickSearchOpen: boolean;
-    setQuickSearchOpen: (open: boolean) => void;
+    setQuickSearchOpen: (_open: boolean) => void;
 
     // Filters
     statusFilter: string | null;
-    setStatusFilter: (status: string | null) => void;
+    setStatusFilter: (_status: string | null) => void;
     platformFilter: string | null;
-    setPlatformFilter: (platform: string | null) => void;
+    setPlatformFilter: (_platform: string | null) => void;
     jobTypeFilter: string | null;
-    setJobTypeFilter: (type: string | null) => void;
+    setJobTypeFilter: (_type: string | null) => void;
     priorityFilter: string | null;
-    setPriorityFilter: (priority: string | null) => void;
+    setPriorityFilter: (_priority: string | null) => void;
     showArchived: boolean;
-    setShowArchived: (show: boolean) => void;
+    setShowArchived: (_show: boolean) => void;
     clearFilters: () => void;
 
     // Command palette
     isCommandOpen: boolean;
-    setCommandOpen: (open: boolean) => void;
+    setCommandOpen: (_open: boolean) => void;
 
     // Quick add modal
     isQuickAddOpen: boolean;
-    setQuickAddOpen: (open: boolean) => void;
+    setQuickAddOpen: (_open: boolean) => void;
 
     // Notifications
     notifications: Notification[];
-    setNotifications: (notifs: Notification[]) => void;
+    setNotifications: (_notifs: Notification[]) => void;
     unreadCount: number;
-    setUnreadCount: (count: number) => void;
+    setUnreadCount: (_count: number) => void;
 
     // Selected application
     selectedAppId: string | null;
-    setSelectedAppId: (id: string | null) => void;
+    setSelectedAppId: (_id: string | null) => void;
 
     // Sidebar
     sidebarOpen: boolean;
-    setSidebarOpen: (open: boolean) => void;
+    setSidebarOpen: (_open: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({

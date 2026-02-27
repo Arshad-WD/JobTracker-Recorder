@@ -2,6 +2,12 @@
     "$schema": "https://json.schemastore.org/eslintrc",
     "extends": "next/core-web-vitals",
     "rules": {
-        "no-unused-vars": "warn"
+        "no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_"
+            }
+        ]
     }
 }

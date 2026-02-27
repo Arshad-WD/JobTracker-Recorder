@@ -3,10 +3,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  Building2,
   MapPin,
   Calendar,
-  ExternalLink,
   User,
   Phone,
   Mail,
@@ -28,7 +26,7 @@ type AppWithInterviews = Application & { interviews: Interview[] };
 
 interface ListViewProps {
   applications: AppWithInterviews[];
-  onSelect: (id: string) => void;
+  onSelect: (_id: string) => void;
 }
 
 export function ListView({ applications, onSelect }: ListViewProps) {

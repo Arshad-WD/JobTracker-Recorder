@@ -11,7 +11,6 @@ import {
   Moon,
   Menu,
   LogOut,
-  User,
   Command,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,7 +24,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { useAppStore } from "@/hooks/use-store";
 
 export function Header() {

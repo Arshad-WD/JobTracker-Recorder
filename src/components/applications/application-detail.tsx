@@ -4,7 +4,6 @@ import React, { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
-  Building2,
   Briefcase,
   MapPin,
   Calendar,
@@ -34,7 +33,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  getStatusColor,
   getStatusLabel,
   getPriorityColor,
   getPlatformLabel,
@@ -48,7 +46,6 @@ import {
   deleteApplication,
   archiveApplication,
   createInterview,
-  deleteInterview,
 } from "@/server/actions";
 import { useAppStore } from "@/hooks/use-store";
 import { toast } from "sonner";
@@ -64,7 +61,6 @@ interface ApplicationDetailProps {
 export function ApplicationDetail({ application, onClose }: ApplicationDetailProps) {
   const { updateApplication: optimisticUpdate, removeApplication } = useAppStore();
   const [isPending, startTransition] = useTransition();
-  const [isEditing, setIsEditing] = useState(false);
   const [notes, setNotes] = useState(application.notes || "");
   const [showInterviewForm, setShowInterviewForm] = useState(false);
 

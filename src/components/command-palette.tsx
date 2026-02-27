@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Command } from "cmdk";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,8 +15,6 @@ import {
   Phone,
   Moon,
   Sun,
-  FileDown,
-  FileUp,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useAppStore } from "@/hooks/use-store";

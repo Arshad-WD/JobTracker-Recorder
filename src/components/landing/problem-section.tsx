@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { AlertTriangle, Zap, Table, BarChart3 } from "lucide-react";
+import { AlertTriangle, Zap } from "lucide-react";
 
 export function ProblemSection() {
   return (

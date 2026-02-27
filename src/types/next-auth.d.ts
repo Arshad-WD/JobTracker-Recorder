@@ -1,4 +1,4 @@
-import NextAuth from "next-auth/next";
+import "next-auth";
 
 declare module "next-auth" {
     interface Session {

@@ -23,7 +23,6 @@ import {
 import {
   getStatusColor,
   getStatusLabel,
-  getPriorityColor,
   getPlatformLabel,
   getJobTypeLabel,
   formatDate,
@@ -39,7 +38,7 @@ type AppWithInterviews = Application & { interviews: Interview[] };
 
 interface TableViewProps {
   applications: AppWithInterviews[];
-  onSelect: (id: string) => void;
+  onSelect: (_id: string) => void;
 }
 
 export function TableView({ applications, onSelect }: TableViewProps) {

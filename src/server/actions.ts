@@ -165,8 +165,6 @@ export async function searchApplications(query: string) {
     const session = await getSession();
     if (!query.trim()) return [];
 
-    const searchTerm = `%${query.toLowerCase()}%`;
-
     return prisma.application.findMany({
         where: {
             userId: session.user.id,
@@ -450,7 +448,7 @@ export async function importApplications(apps: unknown[]) {
     return results;
 }
 
-export async function exportApplications(format: "csv" | "json") {
+export async function exportApplications(_format: "csv" | "json") {
     const session = await getSession();
     const apps = await prisma.application.findMany({
         where: { userId: session.user.id },

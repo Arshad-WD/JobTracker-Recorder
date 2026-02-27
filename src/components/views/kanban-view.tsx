@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useCallback, useTransition } from "react";
-import { motion } from "framer-motion";
 import {
   DragDropContext,
   Droppable,
@@ -9,9 +8,7 @@ import {
   type DropResult,
 } from "@hello-pangea/dnd";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  getStatusColor,
   getStatusLabel,
   getPlatformLabel,
   formatDate,
@@ -35,12 +32,12 @@ const COLUMNS: { id: ApplicationStatus; label: string; color: string }[] = [
 
 interface KanbanViewProps {
   applications: AppWithInterviews[];
-  onSelect: (id: string) => void;
+  onSelect: (_id: string) => void;
 }
 
 export function KanbanView({ applications, onSelect }: KanbanViewProps) {
   const { updateApplication } = useAppStore();
-  const [isPending, startTransition] = useTransition();
+  const [_isPending, startTransition] = useTransition();
 
   const getColumnApps = useCallback(
     (status: ApplicationStatus) =>

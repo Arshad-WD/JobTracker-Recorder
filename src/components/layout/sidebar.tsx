@@ -3,15 +3,13 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   Briefcase,
   BarChart3,
   Archive,
   Settings,
-  Bell,
-  Search,
   ChevronLeft,
   ChevronRight,
   Phone,

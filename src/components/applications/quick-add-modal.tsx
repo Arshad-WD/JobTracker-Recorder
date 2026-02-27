@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  X,
   Loader2,
   AlertTriangle,
   Link2,
@@ -15,6 +14,7 @@ import {
   ChevronUp,
   Sparkles,
 } from "lucide-react";
+import Image from "next/image";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -346,14 +346,17 @@ export function QuickAddModal() {
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
                       {companyLogo && (
-                        <img
-                          src={companyLogo}
-                          alt=""
-                          className="h-8 w-8 rounded-lg border bg-white p-0.5"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = "none";
-                          }}
-                        />
+                        <div className="relative h-8 w-8 rounded-lg border bg-white p-0.5 overflow-hidden">
+                          <Image
+                            src={companyLogo}
+                            alt=""
+                            fill
+                            className="object-contain"
+                            onError={() => {
+                              setCompanyLogo(null);
+                            }}
+                          />
+                        </div>
                       )}
                       <div className="flex-1 grid grid-cols-2 gap-3">
                         <div className="space-y-1.5">

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getSmartReminderDays, getDaysInactive } from "@/lib/utils";
-import type { Application } from "@prisma/client";
+
 
 export interface ReminderResult {
     applicationId: string;
