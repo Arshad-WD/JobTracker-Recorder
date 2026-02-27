@@ -25,6 +25,8 @@ export const metadata: Metadata = {
 
 export default async function LandingPage() {
   const session = await getServerSession(authOptions);
+  
+  console.log(`[LANDING] Session detected: ${session ? session.user?.email : "None"}`);
 
   if (session) {
     redirect("/dashboard");
