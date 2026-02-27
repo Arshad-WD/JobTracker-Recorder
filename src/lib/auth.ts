@@ -26,54 +26,47 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                if (!credentials?.email) return null;
-
-                const user = await prisma.user.findUnique({
-                    where: { email: credentials.email },
-                });
-
-                if (!user) {
-                    // If no password provided and no user exists, auto-create (original demo mode)
-                    // However, we should probably check if we want to allow this.
-                    // For now, let's keep it but only for NEW users.
-                    if (!credentials.password) {
-                        const newUser = await prisma.user.create({
-                            data: {
-                                email: credentials.email,
-                                name: credentials.email.split("@")[0],
-                            },
-                        });
-                        return {
-                            id: newUser.id,
-                            email: newUser.email,
-                            name: newUser.name,
-                            image: newUser.image,
-                        };
+                try {
+                    if (!credentials?.email || !credentials?.password) {
+                        return null;
                     }
-                    return null;
-                }
 
-                // If user has a password, verify it
-                if (user.hashedPassword) {
-                    if (!credentials.password) return null; // Password required
+                    const user = await prisma.user.findUnique({
+                        where: { email: credentials.email },
+                    });
+
+                    if (!user) {
+                        console.log(`[AUTH] User not found: ${credentials.email}`);
+                        return null;
+                    }
+
+                    if (!user.hashedPassword) {
+                        console.log(`[AUTH] User has no password (OAuth user?): ${credentials.email}`);
+                        // User exists but has no password (e.g. Google user)
+                        // They should use Google login
+                        return null;
+                    }
+
                     const isValid = await bcrypt.compare(
                         credentials.password,
                         user.hashedPassword
                     );
-                    if (!isValid) return null;
-                } else if (credentials.password) {
-                    // User exists but has no password (e.g. Google user)
-                    // If they provided a password, maybe they want to set one?
-                    // For now, just reject since they should use Google or we need a set-password flow
+
+                    if (!isValid) {
+                        console.log(`[AUTH] Invalid password for: ${credentials.email}`);
+                        return null;
+                    }
+
+                    return {
+                        id: user.id,
+                        email: user.email,
+                        name: user.name,
+                        image: user.image,
+                    };
+                } catch (error) {
+                    console.error("[AUTH] Authorization error:", error);
                     return null;
                 }
-
-                return {
-                    id: user.id,
-                    email: user.email,
-                    name: user.name,
-                    image: user.image,
-                };
             },
         }),
     ],

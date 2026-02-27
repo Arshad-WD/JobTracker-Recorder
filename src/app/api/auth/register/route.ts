@@ -12,6 +12,8 @@ const registerSchema = z.object({
 export async function POST(request: Request) {
     try {
         const body = await request.json();
+        console.log(`[REGISTER] Attempting registration for: ${body.email}`);
+
         const validated = registerSchema.parse(body);
 
         // Check if user already exists
@@ -20,6 +22,7 @@ export async function POST(request: Request) {
         });
 
         if (existingUser) {
+            console.log(`[REGISTER] User already exists: ${validated.email}`);
             return NextResponse.json(
                 { error: "An account with this email already exists" },
                 { status: 409 }
@@ -29,25 +32,29 @@ export async function POST(request: Request) {
         // Hash password
         const hashedPassword = await bcrypt.hash(validated.password, 12);
 
-        // Create user
-        const user = await prisma.user.create({
-            data: {
-                name: validated.name,
-                email: validated.email,
-                hashedPassword,
-            },
+        // Create user and welcome notification in a transaction
+        const result = await prisma.$transaction(async (tx) => {
+            const user = await tx.user.create({
+                data: {
+                    name: validated.name,
+                    email: validated.email,
+                    hashedPassword,
+                },
+            });
+
+            await tx.notification.create({
+                data: {
+                    userId: user.id,
+                    title: "Welcome to JobTracker! 🎉",
+                    message: "Start adding your job applications and never lose track of your job search again.",
+                    type: "SYSTEM",
+                },
+            });
+
+            return user;
         });
 
-        // Create welcome notification
-        await prisma.notification.create({
-            data: {
-                userId: user.id,
-                title: "Welcome to JobTracker! 🎉",
-                message:
-                    "Start adding your job applications and never lose track of your job search again.",
-                type: "SYSTEM",
-            },
-        });
+        console.log(`[REGISTER] Successfully created account for: ${validated.email}`);
 
         return NextResponse.json(
             { success: true, message: "Account created successfully" },
@@ -61,9 +68,18 @@ export async function POST(request: Request) {
             );
         }
 
-        console.error("Registration error:", error);
+        console.error("[REGISTER] Registration error:", error);
+
+        // Return a more descriptive error if it's a Prisma error
+        if (error instanceof Error && error.message.includes("Can't reach database")) {
+            return NextResponse.json(
+                { error: "Database connection failed. Please check your environment variables." },
+                { status: 503 }
+            );
+        }
+
         return NextResponse.json(
-            { error: "Something went wrong" },
+            { error: "Something went wrong during registration. Please try again later." },
             { status: 500 }
         );
     }

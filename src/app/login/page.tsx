@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { signIn } from "next-auth/react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Briefcase, Mail, Loader2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -139,9 +140,9 @@ export default function LoginPage() {
 
           <p className="text-xs text-muted-foreground text-center mt-6">
             Don&apos;t have an account?{" "}
-            <a href="/register" className="text-primary font-medium hover:underline">
+            <Link href="/register" className="text-primary font-medium hover:underline">
               Create one
-            </a>
+            </Link>
           </p>
         </div>
       </motion.div>
