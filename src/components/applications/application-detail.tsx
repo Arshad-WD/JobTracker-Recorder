@@ -17,6 +17,8 @@ import {
   Loader2,
   Plus,
   Clock,
+  Pencil,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -50,6 +52,8 @@ import {
 import { useAppStore } from "@/hooks/use-store";
 import { toast } from "sonner";
 import type { Application, Interview, ApplicationStatus } from "@prisma/client";
+import { EditApplicationModal } from "./edit-application-modal";
+import { AIAssistantModal } from "./ai-assistant-modal";
 
 type AppWithInterviews = Application & { interviews: Interview[] };
 
@@ -63,6 +67,8 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
   const [isPending, startTransition] = useTransition();
   const [notes, setNotes] = useState(application.notes || "");
   const [showInterviewForm, setShowInterviewForm] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
 
   const handleStatusChange = (status: string) => {
     optimisticUpdate(application.id, { status: status as ApplicationStatus });
@@ -398,7 +404,23 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
 
             {/* Actions */}
             <Separator />
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => setShowEditModal(true)}
+              >
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2 border-violet-500/30 text-violet-400 hover:bg-violet-500/10"
+                onClick={() => setShowAIModal(true)}
+              >
+                <Sparkles className="h-4 w-4" />
+                AI Assistant
+              </Button>
               <Button variant="outline" className="gap-2" onClick={handleArchive}>
                 <Archive className="h-4 w-4" />
                 Archive
@@ -411,6 +433,20 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
           </div>
         </ScrollArea>
       </motion.div>
+
+      {/* Edit Modal */}
+      <EditApplicationModal
+        application={application}
+        open={showEditModal}
+        onClose={() => setShowEditModal(false)}
+      />
+
+      {/* AI Assistant Modal */}
+      <AIAssistantModal
+        application={application}
+        open={showAIModal}
+        onClose={() => setShowAIModal(false)}
+      />
     </AnimatePresence>
   );
 }

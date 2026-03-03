@@ -60,10 +60,21 @@ model User {
   reminderDays        Int     @default(30)
   reminderTime        String  @default("09:00")
 
+  // AI Settings
+  aiProvider    AIProvider?
+  aiApiKey      String?    @db.Text
+  aiModel       String?
+
+  // Streak tracking
+  currentStreak  Int       @default(0)
+  longestStreak  Int       @default(0)
+  lastActiveDate DateTime?
+
   accounts      Account[]
   sessions      Session[]
   applications  Application[]
   notifications Notification[]
+  goals         Goal[]
 }
 
 model Application {
@@ -154,7 +165,42 @@ model Attachment {
   @@index([applicationId])
 }
 
+model Goal {
+  id           String     @id @default(cuid())
+  userId       String
+  title        String
+  goalType     GoalType
+  targetCount  Int
+  currentCount Int        @default(0)
+  startDate    DateTime   @default(now())
+  endDate      DateTime?
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isActive])
+}
+
 // Enums
+enum AIProvider {
+  GEMINI
+  OPENAI
+  CLAUDE
+  OPENROUTER
+  HUGGINGFACE
+}
+
+enum GoalType {
+  WEEKLY_APPLICATIONS
+  WEEKLY_INTERVIEWS
+  MONTHLY_APPLICATIONS
+  MONTHLY_INTERVIEWS
+  CUSTOM
+}
+
 enum Platform {
   LINKEDIN
   INDEED

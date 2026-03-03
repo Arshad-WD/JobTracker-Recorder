@@ -48,20 +48,21 @@ export function Header() {
       initial={false}
       animate={{ paddingLeft: isMobile ? 0 : (sidebarOpen ? 256 : 72) }}
       transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="fixed top-0 right-0 left-0 z-30 h-16 border-b border-border bg-background/80 backdrop-blur-xl"
+      className="fixed top-0 right-0 left-0 z-30 h-auto border-b border-border bg-background/80 backdrop-blur-xl"
     >
-      <div className="flex items-center justify-between h-full px-4 md:px-6">
+      <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Left: Menu + Search */}
         <div className="flex items-center gap-3 flex-1">
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden flex-shrink-0"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             <Menu className="h-5 w-5" />
           </Button>
 
+          {/* Desktop search */}
           <div className="hidden md:flex items-center gap-2 max-w-md flex-1">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -139,6 +140,19 @@ export function Header() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Mobile search bar - always visible below header on mobile */}
+      <div className="md:hidden px-4 pb-3">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search applications..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 bg-muted/50 border-0 focus-visible:ring-1 h-9"
+          />
         </div>
       </div>
     </motion.header>

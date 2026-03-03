@@ -26,7 +26,7 @@ export default function DashboardLayout({
         initial={false}
         animate={{ paddingLeft: isMobile ? 0 : (sidebarOpen ? 256 : 72) }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="pt-16 min-h-screen"
+        className="pt-24 md:pt-16 min-h-screen"
       >
         <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
           {children}

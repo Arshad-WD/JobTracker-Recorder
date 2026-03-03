@@ -389,17 +389,23 @@ export async function deleteInterview(id: string) {
 
 export async function getUserSettings() {
     const session = await getSession();
-    return prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
         where: { id: session.user.id },
-        select: {
-            reminderEnabled: true,
-            emailReminders: true,
-            desktopNotifications: true,
-            smsReminders: true,
-            reminderDays: true,
-            reminderTime: true,
-        },
     });
+    if (!user) return null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const u = user as any;
+    return {
+        reminderEnabled: user.reminderEnabled,
+        emailReminders: user.emailReminders,
+        desktopNotifications: user.desktopNotifications,
+        smsReminders: user.smsReminders,
+        reminderDays: user.reminderDays,
+        reminderTime: user.reminderTime,
+        aiProvider: u.aiProvider ?? null,
+        aiApiKey: u.aiApiKey ?? null,
+        aiModel: u.aiModel ?? null,
+    };
 }
 
 export async function updateUserSettings(data: {
@@ -409,11 +415,20 @@ export async function updateUserSettings(data: {
     smsReminders?: boolean;
     reminderDays?: number;
     reminderTime?: string;
+    aiProvider?: string | null;
+    aiApiKey?: string | null;
+    aiModel?: string | null;
 }) {
     const session = await getSession();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateData: Record<string, any> = { ...data };
+    // Cast aiProvider string to the Prisma enum
+    if ('aiProvider' in updateData) {
+        updateData.aiProvider = updateData.aiProvider || null;
+    }
     await prisma.user.update({
         where: { id: session.user.id },
-        data,
+        data: updateData,
     });
     revalidatePath("/settings");
     return { success: true };
