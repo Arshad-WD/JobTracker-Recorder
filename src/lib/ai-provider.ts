@@ -152,6 +152,35 @@ async function generateWithHuggingFace(
     return result.generated_text;
 }
 
+/** Format AI provider errors into user-friendly messages */
+function formatAIError(error: unknown): string {
+    const msg = error instanceof Error ? error.message : String(error);
+
+    if (msg.includes("invalid x-api-key") || msg.includes("authentication_error") || msg.includes("Incorrect API key") || msg.includes("401")) {
+        return "Invalid API key provided. Please check your key and try again.";
+    }
+    if (msg.includes("404") && msg.includes("model")) {
+        return "The selected model is not available with this API key.";
+    }
+    if (msg.includes("429") || msg.includes("rate_limit_exceeded") || msg.includes("insufficient_quota")) {
+        return "Rate limit or quota exceeded. Please check your billing details.";
+    }
+
+    try {
+        if (msg.includes("{")) {
+            const jsonStr = msg.substring(msg.indexOf("{"));
+            const parsed = JSON.parse(jsonStr);
+            if (parsed.error && parsed.error.message) {
+                return parsed.error.message;
+            }
+        }
+    } catch {
+        // Ignore parsing errors
+    }
+
+    return "Failed to connect to AI: " + msg;
+}
+
 /** Test if an API key works for a given provider */
 export async function testAIConnection(
     config: AIConfig
@@ -165,8 +194,7 @@ export async function testAIConnection(
     } catch (error) {
         return {
             success: false,
-            error:
-                error instanceof Error ? error.message : "Failed to connect to AI",
+            error: formatAIError(error),
         };
     }
 }
