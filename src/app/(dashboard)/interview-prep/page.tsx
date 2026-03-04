@@ -163,7 +163,7 @@ export default function InterviewPrepPage() {
   const [resumeFileName, setResumeFileName] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -177,9 +177,33 @@ export default function InterviewPrepPage() {
       };
       reader.readAsText(file);
     } else if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
-      toast.info("PDF support: Please copy-paste your resume text for best results");
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("/api/pdf-parse", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setResumeText(data.text);
+          setResumeFileName(file.name);
+          setResumeExpanded(true);
+          toast.success("PDF resume loaded successfully");
+        } else {
+          toast.error(data.error || "Failed to parse PDF");
+        }
+      } catch (err) {
+        toast.error("Error connected to PDF parser");
+      } finally {
+        setLoading(false);
+      }
     } else {
-      toast.error("Unsupported file type. Please use .txt or paste your resume.");
+      toast.error("Unsupported file type. Please use .txt or .pdf.");
     }
     e.target.value = "";
   };
@@ -374,10 +398,10 @@ export default function InterviewPrepPage() {
                   <div className="flex items-center gap-2">
                     <label className="glass-btn px-3 py-1.5 rounded-xl text-xs font-medium text-white/50 hover:text-white cursor-pointer flex items-center gap-1.5 border-white/10">
                       <Upload className="w-3.5 h-3.5" />
-                      Upload .txt
+                      Upload .txt / .pdf
                       <input
                         type="file"
-                        accept=".txt,.text"
+                        accept=".txt,.text,.pdf"
                         onChange={handleFileUpload}
                         className="hidden"
                       />
