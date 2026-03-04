@@ -23,7 +23,7 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#050508] text-white overflow-x-hidden">
       {children}
     </div>
   );

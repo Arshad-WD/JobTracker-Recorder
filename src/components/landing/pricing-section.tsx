@@ -60,8 +60,12 @@ const plans = [
 
 export function PricingSection() {
   return (
-    <section id="pricing" className="relative py-20 md:py-32 px-4 sm:px-6 lg:px-8">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-violet-600/5 rounded-full blur-[120px] pointer-events-none" />
+    <section
+      id="pricing"
+      className="relative py-24 md:py-36 px-4 sm:px-6 lg:px-8"
+    >
+      {/* Background glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-violet-600/[0.03] rounded-full blur-[150px] pointer-events-none" />
 
       <div className="relative max-w-5xl mx-auto">
         <motion.div
@@ -69,20 +73,20 @@ export function PricingSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7 }}
-          className="text-center mb-12 md:mb-16"
+          className="text-center mb-14 md:mb-20"
         >
-          <span className="text-xs sm:text-sm font-medium text-violet-400 uppercase tracking-widest">
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 glass-bubble-sm text-[11px] font-semibold text-violet-400 uppercase tracking-[0.15em] mb-4">
             Pricing
           </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
+          <h2 className="mt-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-[-0.02em] bg-gradient-to-b from-white via-white/90 to-white/40 bg-clip-text text-transparent">
             Simple, transparent pricing
           </h2>
-          <p className="mt-4 text-base md:text-lg text-white/40 max-w-lg mx-auto">
+          <p className="mt-5 text-base md:text-lg text-white/30 max-w-lg mx-auto font-light">
             Start free and upgrade when you need more power.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
           {plans.map((plan, i) => (
             <motion.div
               key={plan.name}
@@ -90,32 +94,58 @@ export function PricingSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className={`relative rounded-2xl p-6 md:p-7 flex flex-col ${
+              className={`relative flex flex-col p-6 md:p-7 transition-all duration-300 ${
                 plan.popular
-                  ? "bg-gradient-to-b from-violet-500/10 to-indigo-500/5 border-2 border-violet-500/30"
-                  : "bg-white/[0.02] border border-white/5"
+                  ? "glass-bubble-lg"
+                  : "glass-bubble"
               }`}
+              style={
+                plan.popular
+                  ? {
+                      background:
+                        "linear-gradient(135deg, rgba(139, 92, 246, 0.06), rgba(99, 102, 241, 0.03))",
+                      borderColor: "rgba(139, 92, 246, 0.15)",
+                    }
+                  : undefined
+              }
             >
+              {/* Popular badge */}
               {plan.popular && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-xs font-medium text-white flex items-center gap-1.5 shadow-lg">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 glass-cta px-4 py-1.5 text-[11px] font-semibold text-white flex items-center gap-1.5 !rounded-full">
                   <Sparkles className="w-3 h-3" />
                   Most Popular
                 </div>
               )}
 
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-white/80">{plan.name}</h3>
-                <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-3xl md:text-4xl font-bold text-white">{plan.price}</span>
-                  <span className="text-sm text-white/40">{plan.period}</span>
+              {/* Glow for popular */}
+              {plan.popular && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-violet-500/[0.06] rounded-full blur-[60px] pointer-events-none" />
+              )}
+
+              <div className="relative mb-6">
+                <h3 className="text-lg font-semibold text-white/70">
+                  {plan.name}
+                </h3>
+                <div className="mt-3 flex items-baseline gap-1">
+                  <span className="text-3xl md:text-4xl font-bold bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent">
+                    {plan.price}
+                  </span>
+                  <span className="text-sm text-white/30">{plan.period}</span>
                 </div>
-                <p className="mt-2 text-sm text-white/40">{plan.description}</p>
+                <p className="mt-2 text-sm text-white/30">{plan.description}</p>
               </div>
 
-              <ul className="space-y-2.5 mb-8 flex-1">
+              <ul className="space-y-3 mb-8 flex-1">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2.5 text-sm text-white/50">
-                    <Check className="w-4 h-4 text-violet-400 shrink-0 mt-0.5" />
+                  <li
+                    key={feature}
+                    className="flex items-start gap-2.5 text-sm text-white/40"
+                  >
+                    <Check
+                      className={`w-4 h-4 shrink-0 mt-0.5 ${
+                        plan.popular ? "text-violet-400" : "text-cyan-400/60"
+                      }`}
+                    />
                     {feature}
                   </li>
                 ))}
@@ -123,10 +153,10 @@ export function PricingSection() {
 
               <Link
                 href="/register"
-                className={`w-full py-3 text-center rounded-xl text-sm font-medium transition-all hover:scale-[1.02] active:scale-[0.98] ${
+                className={`relative w-full py-3 text-center rounded-2xl text-sm font-medium transition-all duration-300 ${
                   plan.popular
-                    ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40"
-                    : "border border-white/10 text-white/70 hover:text-white hover:border-white/20 hover:bg-white/5"
+                    ? "glass-cta text-white"
+                    : "glass-btn text-white/60 hover:text-white"
                 }`}
               >
                 {plan.cta}
