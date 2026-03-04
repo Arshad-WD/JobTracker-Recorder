@@ -5,6 +5,10 @@ const pdf = require("pdf-parse");
 
 export const dynamic = "force-dynamic";
 
+export async function GET() {
+    return NextResponse.json({ status: "ok", message: "PDF parser is ready" });
+}
+
 export async function POST(request: NextRequest) {
     try {
         const session = await getServerSession(authOptions);
@@ -26,6 +30,7 @@ export async function POST(request: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
+        // pdf-parse can be tricky with ESM/CommonJS in Next.js
         const data = await pdf(buffer);
 
         return NextResponse.json({
