@@ -63,7 +63,7 @@ export async function POST(request: Request) {
             where: { id: session.user.id },
         });
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         const u = user as any;
 
         if (!u?.aiProvider || !u?.aiApiKey) {

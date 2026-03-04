@@ -15,7 +15,7 @@ async function getSession() {
 
 export async function getGoals() {
     const session = await getSession();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     return (prisma as any).goal.findMany({
         where: { userId: session.user.id, isActive: true },
         orderBy: { createdAt: "desc" },
@@ -30,7 +30,7 @@ export async function createGoal(data: {
 }) {
     const session = await getSession();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const goal = await (prisma as any).goal.create({
         data: {
             userId: session.user.id,
@@ -49,14 +49,14 @@ export async function createGoal(data: {
 export async function updateGoalProgress(id: string, increment: number = 1) {
     const session = await getSession();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const goal = await (prisma as any).goal.findFirst({
         where: { id, userId: session.user.id },
     });
 
     if (!goal) throw new Error("Goal not found");
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const updated = await (prisma as any).goal.update({
         where: { id },
         data: { currentCount: { increment } },
@@ -69,7 +69,7 @@ export async function updateGoalProgress(id: string, increment: number = 1) {
 
 export async function deleteGoal(id: string) {
     const session = await getSession();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     await (prisma as any).goal.deleteMany({
         where: { id, userId: session.user.id },
     });
@@ -85,7 +85,7 @@ export async function getStreakData() {
         where: { id: session.user.id },
     });
     if (!user) return null;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const u = user as any;
     return {
         currentStreak: u.currentStreak ?? 0,
@@ -101,7 +101,7 @@ export async function updateStreak() {
     });
 
     if (!user) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const u = user as any;
 
     const today = new Date();
@@ -133,7 +133,6 @@ export async function updateStreak() {
 
     await prisma.user.update({
         where: { id: session.user.id },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         data: {
             currentStreak: newStreak,
             longestStreak,

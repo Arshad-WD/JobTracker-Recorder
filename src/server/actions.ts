@@ -393,7 +393,7 @@ export async function getUserSettings() {
         where: { id: session.user.id },
     });
     if (!user) return null;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const u = user as any;
     return {
         reminderEnabled: user.reminderEnabled,
@@ -420,7 +420,7 @@ export async function updateUserSettings(data: {
     aiModel?: string | null;
 }) {
     const session = await getSession();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const updateData: Record<string, any> = { ...data };
     // Cast aiProvider string to the Prisma enum
     if ('aiProvider' in updateData) {
