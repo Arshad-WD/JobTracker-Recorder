@@ -74,19 +74,17 @@ export function ProblemSection() {
               {/* Messy spreadsheet mockup */}
               <div className="mt-6 rounded-xl overflow-hidden border border-red-500/[0.08] bg-red-500/[0.02]">
                 <div className="grid grid-cols-4 gap-px">
-                  {Array.from({ length: 16 }).map((_, i) => (
+                  {[72, 45, 88, 35, 60, 50, 78, 42, 90, 55, 68, 38, 82, 48, 65, 58].map((w, i) => (
                     <div
                       key={i}
                       className="h-6 px-2 flex items-center"
                       style={{
-                        background: `rgba(239, 68, 68, ${
-                          0.02 + Math.random() * 0.03
-                        })`,
+                        background: `rgba(239, 68, 68, ${0.02 + (i % 5) * 0.006})`,
                       }}
                     >
                       <div
                         className="h-1.5 rounded-full bg-red-400/15"
-                        style={{ width: `${30 + Math.random() * 60}%` }}
+                        style={{ width: `${w}%` }}
                       />
                     </div>
                   ))}
