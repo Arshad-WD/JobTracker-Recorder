@@ -19,6 +19,9 @@ import {
   Target,
   Lightbulb,
   ArrowRight,
+  FileText,
+  Upload,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -155,7 +158,31 @@ export default function InterviewPrepPage() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [expandedQ, setExpandedQ] = useState<number | null>(null);
+  const [resumeText, setResumeText] = useState("");
+  const [resumeExpanded, setResumeExpanded] = useState(false);
+  const [resumeFileName, setResumeFileName] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type === "text/plain" || file.name.endsWith(".txt")) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setResumeText(ev.target?.result as string);
+        setResumeFileName(file.name);
+        setResumeExpanded(true);
+        toast.success("Resume loaded successfully");
+      };
+      reader.readAsText(file);
+    } else if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
+      toast.info("PDF support: Please copy-paste your resume text for best results");
+    } else {
+      toast.error("Unsupported file type. Please use .txt or paste your resume.");
+    }
+    e.target.value = "";
+  };
 
   useEffect(() => {
     startTransition(async () => {
@@ -193,6 +220,7 @@ export default function InterviewPrepPage() {
           category: selectedCategory,
           jobType: selectedApp.jobType,
           notes: selectedApp.notes || "",
+          resumeText: resumeText.trim() || undefined,
         }),
       });
 
@@ -288,6 +316,95 @@ export default function InterviewPrepPage() {
             </motion.div>
           )}
         </div>
+      </div>
+
+      {/* Resume Input — Glass Bubble */}
+      <div className="glass-bubble overflow-hidden" style={{ borderRadius: "20px" }}>
+        <button
+          onClick={() => setResumeExpanded(!resumeExpanded)}
+          className="w-full flex items-center justify-between p-5 sm:p-6 text-left hover:bg-white/[0.01] transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
+              <FileText className="w-4 h-4 text-white/40" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-white/70 flex items-center gap-2">
+                Resume
+                {resumeText && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/15 text-emerald-400 font-semibold">
+                    Loaded
+                  </span>
+                )}
+              </p>
+              <p className="text-[11px] text-white/25 mt-0.5">
+                {resumeText
+                  ? `${resumeText.length.toLocaleString()} characters${resumeFileName ? ` · ${resumeFileName}` : ""}`
+                  : "Paste or upload your resume for tailored questions"}
+              </p>
+            </div>
+          </div>
+          <ChevronDown
+            className={`w-4 h-4 text-white/20 transition-transform duration-300 ${
+              resumeExpanded ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        <AnimatePresence>
+          {resumeExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden"
+            >
+              <div className="px-5 sm:px-6 pb-5 sm:pb-6 space-y-3">
+                <textarea
+                  value={resumeText}
+                  onChange={(e) => {
+                    setResumeText(e.target.value);
+                    setResumeFileName(null);
+                  }}
+                  placeholder="Paste your resume text here... The AI will tailor interview questions based on your skills, experience, and projects."
+                  className="w-full h-40 resize-none rounded-xl bg-white/[0.02] border border-white/[0.06] p-4 text-sm text-white/60 placeholder:text-white/15 focus:outline-none focus:border-white/15 focus:ring-1 focus:ring-white/10 transition-all"
+                />
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <label className="glass-btn px-3 py-1.5 rounded-xl text-xs font-medium text-white/50 hover:text-white cursor-pointer flex items-center gap-1.5 border-white/10">
+                      <Upload className="w-3.5 h-3.5" />
+                      Upload .txt
+                      <input
+                        type="file"
+                        accept=".txt,.text"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                      />
+                    </label>
+                    {resumeText && (
+                      <button
+                        onClick={() => {
+                          setResumeText("");
+                          setResumeFileName(null);
+                        }}
+                        className="glass-btn px-3 py-1.5 rounded-xl text-xs font-medium text-white/50 hover:text-rose-400 flex items-center gap-1.5 border-white/10"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  {resumeText && (
+                    <span className="text-[10px] text-white/20">
+                      {resumeText.length.toLocaleString()} characters
+                    </span>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Category Grid — Glass Bubbles */}

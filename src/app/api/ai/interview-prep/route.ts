@@ -17,7 +17,6 @@ export async function POST(request: Request) {
             where: { id: session.user.id },
         });
 
-
         const u = user as any;
 
         if (!u?.aiProvider || !u?.aiApiKey) {
@@ -32,17 +31,22 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json();
-        const { companyName, positionTitle, category, jobType, notes } = body;
+        const { companyName, positionTitle, category, jobType, notes, resumeText } = body;
+
+        // Build resume context block
+        const resumeContext = resumeText
+            ? `\n\nCandidate's Resume:\n${resumeText}\n\nIMPORTANT: Tailor the questions specifically to the candidate's resume — reference their skills, projects, experience, and technologies listed. Ask about their specific work history and how it relates to the ${positionTitle} role at ${companyName}.`
+            : "";
 
         const categoryPrompts: Record<string, string> = {
             technical: `Generate 8 technical interview questions for a ${positionTitle} position at ${companyName}.
 ${jobType ? `Job type: ${jobType}` : ""}
-${notes ? `Context: ${notes}` : ""}
+${notes ? `Context: ${notes}` : ""}${resumeContext}
 
 Include:
-- 3 coding/algorithm questions
-- 2 system design questions
-- 2 technology-specific questions
+- 3 coding/algorithm questions${resumeText ? " (based on technologies from the resume)" : ""}
+- 2 system design questions${resumeText ? " (related to systems the candidate has built)" : ""}
+- 2 technology-specific questions${resumeText ? " (targeting the candidate's listed skills)" : ""}
 - 1 debugging/troubleshooting scenario
 
 For each question:
@@ -51,26 +55,28 @@ For each question:
 - Rate difficulty: Easy, Medium, or Hard`,
 
             behavioral: `Generate 8 behavioral interview questions for a ${positionTitle} position at ${companyName}.
+${resumeContext}
 
 Include STAR method guidance for each:
-- Questions about leadership, teamwork, conflict resolution, failure, success
+- Questions about leadership, teamwork, conflict resolution, failure, success${resumeText ? "\n- Reference specific experiences or projects from the candidate's resume" : ""}
 - What the interviewer wants to hear
 - Brief example answer structure`,
 
             system_design: `Generate 5 system design interview questions appropriate for a ${positionTitle} at ${companyName}.
-${notes ? `Context: ${notes}` : ""}
+${notes ? `Context: ${notes}` : ""}${resumeContext}
 
 For each:
-- Clear problem statement
+- Clear problem statement${resumeText ? " (relate to systems similar to what the candidate has worked on)" : ""}
 - Key areas to discuss (scalability, reliability, etc.)
 - Time estimation (15, 30, or 45 minutes)
 - Key concepts the interviewer expects`,
 
             culture_fit: `Generate 6 culture fit interview questions for ${companyName}.
+${resumeContext}
 
 Include:
 - Questions about work style and values
-- Questions about team dynamics
+- Questions about team dynamics${resumeText ? "\n- Questions referencing the candidate's career trajectory and motivations" : ""}
 - What makes a good answer
 - Red flags to avoid`,
         };
