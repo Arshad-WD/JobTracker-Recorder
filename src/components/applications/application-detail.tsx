@@ -54,6 +54,14 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
 
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [application.id]);
+
   const handleStatusChange = (status: string) => {
     optimisticUpdate(application.id, { status: status as ApplicationStatus });
     startTransition(async () => {
@@ -141,7 +149,7 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
         onClick={(e) => e.stopPropagation()}
       >
         <div className="monolith-scanlines rounded-none" />
-        <ScrollArea className="h-full relative z-10">
+        <ScrollArea viewportRef={scrollRef} className="h-full relative z-10">
           <div className="p-8 space-y-8">
             {/* Header */}
             <div className="flex items-start justify-between bg-white p-6 -mx-8 -mt-8 border-b-[3px] border-black">
