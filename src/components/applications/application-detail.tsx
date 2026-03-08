@@ -4,13 +4,11 @@ import React, { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
-  Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -50,7 +48,7 @@ interface ApplicationDetailProps {
 
 export function ApplicationDetail({ application, onClose }: ApplicationDetailProps) {
   const { updateApplication: optimisticUpdate, removeApplication } = useAppStore();
-  const [isPending, startTransition] = useTransition();
+  const [_isPending, startTransition] = useTransition();
   const [notes, setNotes] = useState(application.notes || "");
   const [showInterviewForm, setShowInterviewForm] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);

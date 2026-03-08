@@ -15,7 +15,7 @@ import {
   cn,
 } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+
 import { updateApplicationStatus } from "@/server/actions";
 import { useAppStore } from "@/hooks/use-store";
 import { toast } from "sonner";

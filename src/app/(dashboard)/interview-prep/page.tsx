@@ -285,7 +285,7 @@ export default function InterviewPrepPage() {
                 <SelectContent className="bg-black border-[2px] border-white rounded-none">
                   {applications.map((app) => (
                     <SelectItem key={app.id} value={app.id} className="font-mono text-xs uppercase hover:bg-white hover:text-black rounded-none">
-                      {app.companyName} // {app.positionTitle}
+                      {`${app.companyName} // ${app.positionTitle}`}
                     </SelectItem>
                   ))}
                 </SelectContent>

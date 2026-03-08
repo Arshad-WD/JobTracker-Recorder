@@ -6,7 +6,7 @@ import { generateWithAI, type AIProviderType } from "@/lib/ai-provider";
 
 export const dynamic = "force-dynamic";
 
-const PROMPTS: Record<string, (data: Record<string, string>) => string> = {
+const PROMPTS: Record<string, (_data: Record<string, string>) => string> = {
     cover_letter: (d) => `Write a professional, compelling cover letter for a ${d.positionTitle} position at ${d.companyName}.
 ${d.jobType ? `Job type: ${d.jobType}` : ""}
 ${d.notes ? `Additional context: ${d.notes}` : ""}

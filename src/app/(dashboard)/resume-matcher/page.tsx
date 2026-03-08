@@ -313,7 +313,7 @@ export default function ResumeMatcherPage() {
                    <div className="p-4 bg-[#8B5CF6]/10 border-l-[4px] border-[#8B5CF6] flex gap-4 items-start">
                       <Terminal className="h-5 w-5 text-[#8B5CF6] shrink-0 mt-1" />
                       <p className="font-black italic uppercase tracking-widest text-[#8B5CF6] text-xl leading-relaxed">
-                         "{result.recommendation}"
+                         &quot;{result.recommendation}&quot;
                       </p>
                    </div>
                    

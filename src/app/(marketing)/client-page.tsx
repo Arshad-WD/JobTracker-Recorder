@@ -4,7 +4,7 @@ import React from 'react';
 import '../../styles/neon-monolith.css';
 import MonolithButton from '@/components/neon/MonolithButton';
 import MonolithCard from '@/components/neon/MonolithCard';
-import MonolithInput from '@/components/neon/MonolithInput';
+
 import Link from 'next/link';
 
 export default function ClientLandingPage() {

@@ -96,7 +96,7 @@ export default function NeonMonolithPage() {
             tag="D-9"
             className="md:col-span-2"
           >
-            Advanced security layers integrated directly into the visual language. Cyber-brutalism isn't just a look; it's a statement of digital sovereignty.
+            Advanced security layers integrated directly into the visual language. Cyber-brutalism isn&apos;t just a look; it&apos;s a statement of digital sovereignty.
           </MonolithCard>
         </div>
       </section>

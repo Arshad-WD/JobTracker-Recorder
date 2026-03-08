@@ -11,7 +11,7 @@ import MonolithInput from "@/components/neon/MonolithInput";
 import '../../styles/neon-monolith.css';
 
 export default function RegisterPage() {
-  const { data: session, status } = useSession();
+  const { data: _session, status } = useSession();
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

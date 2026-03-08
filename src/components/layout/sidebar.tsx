@@ -37,7 +37,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { sidebarOpen, setSidebarOpen, setQuickAddOpen, setQuickSearchOpen } = useAppStore();
+  const { sidebarOpen, setSidebarOpen, setQuickAddOpen } = useAppStore();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   // On mobile: sidebar is either fully open (overlay) or completely hidden
