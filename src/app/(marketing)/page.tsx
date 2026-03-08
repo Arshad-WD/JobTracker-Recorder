@@ -1,16 +1,8 @@
 import { Metadata } from "next";
-import { Navbar } from "@/components/landing/navbar";
-import { HeroSection } from "@/components/landing/hero-section";
-import { ProblemSection } from "@/components/landing/problem-section";
-import { FeaturesSection } from "@/components/landing/features-section";
-import { DemoSection } from "@/components/landing/demo-section";
-import { TestimonialsSection } from "@/components/landing/testimonials-section";
-import { PricingSection } from "@/components/landing/pricing-section";
-import { CTASection } from "@/components/landing/cta-section";
-import { Footer } from "@/components/landing/footer";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import ClientLandingPage from "./client-page";
 
 export const metadata: Metadata = {
   title: "JobTracker — Track Every Application. Miss Nothing.",
@@ -26,23 +18,9 @@ export const metadata: Metadata = {
 export default async function LandingPage() {
   const session = await getServerSession(authOptions);
   
-  console.log(`[LANDING] Session detected: ${session ? session.user?.email : "None"}`);
-
   if (session) {
     redirect("/dashboard");
   }
 
-  return (
-    <>
-      <Navbar />
-      <HeroSection />
-      <ProblemSection />
-      <FeaturesSection />
-      <DemoSection />
-      <TestimonialsSection />
-      <PricingSection />
-      <CTASection />
-      <Footer />
-    </>
-  );
+  return <ClientLandingPage />;
 }

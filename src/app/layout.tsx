@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   keywords: ["job tracker", "application tracker", "job search", "career"],
 };
 
+import '@/styles/neon-monolith.css';
+
 export default function RootLayout({
   children,
 }: {
@@ -22,14 +24,21 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>
-          {children}
+          <div className="monolith-container min-h-screen relative">
+            <div className="monolith-scanlines" />
+            <div className="relative z-10">
+              {children}
+            </div>
+          </div>
           <Toaster
             position="bottom-right"
             toastOptions={{
               style: {
-                background: "hsl(var(--card))",
-                color: "hsl(var(--card-foreground))",
-                border: "1px solid hsl(var(--border))",
+                background: "black",
+                color: "white",
+                border: "3px solid white",
+                borderRadius: "0px",
+                fontFamily: "JetBrains Mono, monospace"
               },
             }}
           />

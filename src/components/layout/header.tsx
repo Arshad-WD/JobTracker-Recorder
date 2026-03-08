@@ -47,8 +47,8 @@ export function Header() {
     <motion.header
       initial={false}
       animate={{ paddingLeft: isMobile ? 0 : (sidebarOpen ? 256 : 72) }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
-      className="fixed top-0 right-0 left-0 z-30 h-auto border-b border-border bg-background/80 backdrop-blur-xl"
+      transition={{ duration: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="fixed top-0 right-0 left-0 z-30 h-16 border-b-[3px] border-white bg-black/95"
     >
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Left: Menu + Search */}
@@ -56,7 +56,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden flex-shrink-0"
+            className="md:hidden flex-shrink-0 text-white"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             <Menu className="h-5 w-5" />
@@ -65,93 +65,80 @@ export function Header() {
           {/* Desktop search */}
           <div className="hidden md:flex items-center gap-2 max-w-md flex-1">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search applications..."
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8B5CF6]" />
+              <input
+                placeholder="Search Archive..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 bg-muted/50 border-0 focus-visible:ring-1"
+                className="w-full pl-10 h-10 bg-black border-[2px] border-white/20 text-white font-mono text-xs focus:outline-none focus:border-[#8B5CF6] transition-all"
               />
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="hidden lg:flex items-center gap-1.5 text-muted-foreground font-normal"
+            <button
+              className="px-3 h-10 border-[2px] border-white/20 text-white/40 hover:text-white hover:border-white transition-all font-mono text-[10px] flex items-center gap-2"
               onClick={() => setCommandOpen(true)}
             >
               <Command className="h-3 w-3" />
-              <span className="text-xs">K</span>
-            </Button>
+              <span>TERMINAL [K]</span>
+            </button>
           </div>
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           {/* Theme toggle */}
           {mounted && (
-            <Button
-              variant="ghost"
-              size="icon"
+            <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="relative"
+              className="h-10 w-10 border-[2px] border-white/20 flex items-center justify-center hover:border-[#8B5CF6] transition-all"
             >
-              <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </Button>
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
           )}
 
           {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="h-4 w-4" />
+          <button className="h-10 w-10 border-[2px] border-white/20 flex items-center justify-center hover:border-[#22C55E] relative transition-all">
+            <Bell className="h-4 w-4 text-white" />
             {unreadCount > 0 && (
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center"
-              >
-                {unreadCount > 9 ? "9+" : unreadCount}
-              </motion.span>
+              <span className="absolute -top-1 -right-1 h-3 w-3 bg-[#22C55E] pulseShadow" />
             )}
-          </Button>
+          </button>
 
           {/* User menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={session?.user?.image || ""} alt={session?.user?.name || ""} />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs">
-                    {session?.user?.name?.charAt(0)?.toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
+              <button className="h-10 px-4 border-[2px] border-white text-white font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-black transition-all">
+                {session?.user?.name?.split(' ')[0] || "SUBJECT"}
+              </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">{session?.user?.name || "User"}</p>
-                  <p className="text-xs text-muted-foreground">{session?.user?.email}</p>
-                </div>
+            <DropdownMenuContent className="w-56 bg-black border-[3px] border-white rounded-none p-2" align="end" forceMount>
+              <DropdownMenuLabel className="font-mono text-[10px] uppercase text-white/40">
+                Identity_Locked
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => signOut()}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+              <div className="px-2 py-4 border-b border-white/10 mb-2">
+                  <p className="text-xs font-black text-white uppercase">{session?.user?.name || "User"}</p>
+                  <p className="text-[10px] font-mono text-[#8B5CF6] truncate">{session?.user?.email}</p>
+              </div>
+              <DropdownMenuItem 
+                onClick={() => signOut()}
+                className="flex items-center gap-4 px-2 py-3 focus:bg-[#EF4444] group cursor-pointer"
+              >
+                <LogOut className="h-4 w-4 text-[#EF4444] group-focus:text-white" />
+                <span className="text-[10px] font-black uppercase text-white group-focus:text-white">Terminate_Session</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
 
-      {/* Mobile search bar - always visible below header on mobile */}
-      <div className="md:hidden px-4 pb-3">
+      {/* Mobile search bar */}
+      <div className="md:hidden px-4 pb-4">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search applications..."
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8B5CF6]" />
+          <input
+            placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 bg-muted/50 border-0 focus-visible:ring-1 h-9"
+            className="w-full pl-10 h-10 bg-black border-[2px] border-white/20 text-white font-mono text-xs"
           />
         </div>
       </div>

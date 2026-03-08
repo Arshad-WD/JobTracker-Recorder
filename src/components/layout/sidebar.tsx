@@ -17,6 +17,7 @@ import {
   X,
   Brain,
   Target,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/applications", label: "Applications", icon: Briefcase },
+  { href: "/resume-matcher", label: "Resume Matcher", icon: Search },
   { href: "/interview-prep", label: "Interview Prep", icon: Brain },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/goals", label: "Goals", icon: Target },
@@ -64,23 +66,20 @@ export function Sidebar() {
           width: isMobile ? 280 : (sidebarOpen ? 256 : 72),
           x: isMobile ? (sidebarOpen ? 0 : -280) : 0,
         }}
-        transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="fixed left-0 top-0 z-50 h-screen border-r border-border bg-card/95 backdrop-blur-xl flex flex-col"
+        transition={{ duration: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="fixed left-0 top-0 z-40 h-screen border-r-[3px] border-white bg-black/95 flex flex-col"
       >
         {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-border">
+        <div className="flex items-center justify-between h-16 px-4 border-b-[3px] border-white">
           {(sidebarOpen || isMobile) ? (
             <div className="flex items-center gap-2 overflow-hidden">
-              <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                <Briefcase className="h-4 w-4 text-white" />
-              </div>
-              <span className="font-bold text-lg bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent whitespace-nowrap">
-                JobTracker
+              <span className="font-black text-xl uppercase tracking-tighter text-white">
+                JOB<span className="text-[#8B5CF6]">TRACKER</span>
               </span>
             </div>
           ) : (
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto">
-              <Briefcase className="h-4 w-4 text-white" />
+            <div className="h-8 w-8 bg-white flex items-center justify-center mx-auto">
+              <span className="font-black text-xs text-black">JT</span>
             </div>
           )}
 
@@ -89,7 +88,7 @@ export function Sidebar() {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 -mr-1"
+              className="h-8 w-8 -mr-1 text-white hover:bg-[#8B5CF6]"
               onClick={() => setSidebarOpen(false)}
             >
               <X className="h-4 w-4" />
@@ -98,14 +97,14 @@ export function Sidebar() {
         </div>
 
         {/* Quick actions */}
-        <div className="px-3 py-3 space-y-1">
+        <div className="px-3 py-6 space-y-4">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="outline"
+              <button
                 className={cn(
-                  "w-full justify-start gap-2 bg-primary/10 hover:bg-primary/20 border-primary/20 text-primary",
-                  !sidebarOpen && !isMobile && "justify-center px-2"
+                  "w-full h-12 flex items-center gap-4 px-4 bg-[#8B5CF6] text-black font-black uppercase text-[10px] tracking-widest transition-all",
+                  "shadow-[4px_4px_0px_#22C55E] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-x-1 active:translate-y-1 active:shadow-none",
+                  !sidebarOpen && !isMobile && "justify-center px-0"
                 )}
                 onClick={() => {
                   setQuickAddOpen(true);
@@ -113,32 +112,15 @@ export function Sidebar() {
                 }}
               >
                 <Plus className="h-4 w-4 flex-shrink-0" />
-                {(sidebarOpen || isMobile) && <span>Quick Add</span>}
-              </Button>
+                {(sidebarOpen || isMobile) && <span>Quick_Add</span>}
+              </button>
             </TooltipTrigger>
-            {!sidebarOpen && !isMobile && <TooltipContent side="right">Quick Add</TooltipContent>}
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                className={cn("w-full justify-start gap-2", !sidebarOpen && !isMobile && "justify-center px-2")}
-                onClick={() => {
-                  setQuickSearchOpen(true);
-                  if (isMobile) setSidebarOpen(false);
-                }}
-              >
-                <Phone className="h-4 w-4 flex-shrink-0" />
-                {(sidebarOpen || isMobile) && <span className="text-sm">Quick Search</span>}
-              </Button>
-            </TooltipTrigger>
-            {!sidebarOpen && !isMobile && <TooltipContent side="right">Quick Search</TooltipContent>}
+            {!sidebarOpen && !isMobile && <TooltipContent side="right">Quick_Add</TooltipContent>}
           </Tooltip>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-3 py-2 space-y-2 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
@@ -150,22 +132,15 @@ export function Sidebar() {
                       if (isMobile) setSidebarOpen(false);
                     }}
                     className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 relative",
+                      "flex items-center gap-4 px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all relative border-[2px] border-transparent",
                       isActive
-                        ? "text-primary bg-primary/10"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent",
-                      !sidebarOpen && !isMobile && "justify-center px-2"
+                        ? "text-[#8B5CF6] border-white !border-l-[6px] bg-white/5"
+                        : "text-white/40 hover:text-white hover:bg-white/5",
+                      !sidebarOpen && !isMobile && "justify-center px-0"
                     )}
                   >
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeNav"
-                        className="absolute inset-0 rounded-lg bg-primary/10 border border-primary/20"
-                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                      />
-                    )}
-                    <item.icon className="h-4 w-4 flex-shrink-0 relative z-10" />
-                    {(sidebarOpen || isMobile) && <span className="relative z-10">{item.label}</span>}
+                    <item.icon className={cn("h-4 w-4 flex-shrink-0", isActive ? "text-[#8B5CF6]" : "text-white/40")} />
+                    {(sidebarOpen || isMobile) && <span className="truncate">{item.label}</span>}
                   </Link>
                 </TooltipTrigger>
                 {!sidebarOpen && !isMobile && <TooltipContent side="right">{item.label}</TooltipContent>}
@@ -176,11 +151,9 @@ export function Sidebar() {
 
         {/* Collapse toggle - desktop only */}
         {!isMobile && (
-          <div className="p-3 border-t border-border">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-center"
+          <div className="p-3 border-t-[3px] border-white">
+            <button
+              className="w-full flex justify-center py-2 text-white/40 hover:text-[#8B5CF6] transition-colors"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               {sidebarOpen ? (
@@ -188,10 +161,11 @@ export function Sidebar() {
               ) : (
                 <ChevronRight className="h-4 w-4" />
               )}
-            </Button>
+            </button>
           </div>
         )}
       </motion.aside>
+
     </TooltipProvider>
   );
 }

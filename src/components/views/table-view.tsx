@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  cn,
   getStatusColor,
   getStatusLabel,
   getPlatformLabel,
@@ -69,41 +70,41 @@ export function TableView({ applications, onSelect }: TableViewProps) {
   };
 
   return (
-    <div className="rounded-xl border border-border overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full">
+    <div className="border-[3px] border-white bg-black overflow-hidden relative">
+      <div className="monolith-scanlines rounded-none" />
+      <div className="overflow-x-auto relative z-10">
+        <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b bg-muted/30">
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Company</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden md:table-cell">Position</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3">Status</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden lg:table-cell">Platform</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden sm:table-cell">Type</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden xl:table-cell">Salary</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden md:table-cell">Score</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 hidden sm:table-cell">Applied</th>
-              <th className="text-left text-xs font-medium text-muted-foreground px-4 py-3 w-10"></th>
+            <tr className="border-b-[3px] border-white bg-white">
+              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4">UNIT_ID</th>
+              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 hidden md:table-cell">POSITION_VECTOR</th>
+              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4">NODE_STATUS</th>
+              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 hidden lg:table-cell">UPSTREAM_SRC</th>
+              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 hidden sm:table-cell">DEPLOY_TYPE</th>
+              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 hidden md:table-cell">MATCH_IDX</th>
+              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 hidden sm:table-cell">TIMESTAMP</th>
+              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 w-10"></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="font-mono text-[11px]">
             {applications.map((app, i) => (
               <motion.tr
                 key={app.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.02 }}
-                className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.03 }}
+                className="border-b border-white/10 hover:bg-white/5 cursor-pointer group transition-colors"
                 onClick={() => onSelect(app.id)}
               >
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-bold">{app.companyName.charAt(0)}</span>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-4">
+                    <div className="h-10 w-10 border-[2px] border-white bg-black flex items-center justify-center flex-shrink-0 group-hover:bg-white group-hover:text-black transition-colors">
+                      <span className="text-sm font-black uppercase">{app.companyName.charAt(0)}</span>
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{app.companyName}</p>
+                      <p className="font-black uppercase tracking-widest text-white group-hover:text-[#8B5CF6] transition-colors">{app.companyName}</p>
                       {app.location && (
-                        <p className="text-xs text-muted-foreground flex items-center gap-0.5">
+                        <p className="text-[8px] text-white/40 flex items-center gap-1 uppercase tracking-tighter mt-0.5">
                           <MapPin className="h-2.5 w-2.5" />
                           {app.location}
                         </p>
@@ -111,69 +112,67 @@ export function TableView({ applications, onSelect }: TableViewProps) {
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm hidden md:table-cell">{app.positionTitle}</td>
-                <td className="px-4 py-3">
-                  <Badge className={getStatusColor(app.status)} variant="outline">
+                <td className="px-6 py-4 text-white/60 uppercase font-black tracking-tight hidden md:table-cell">{app.positionTitle}</td>
+                <td className="px-6 py-4">
+                  <span className={cn(
+                    "px-3 py-1 border-[2px] font-black text-[9px] uppercase tracking-widest",
+                    app.status === "OFFER" ? "border-[#22C55E] text-[#22C55E]" : 
+                    app.status === "REJECTED" ? "border-[#EF4444] text-[#EF4444]" : 
+                    "border-white/20 text-white/60"
+                  )}>
                     {getStatusLabel(app.status)}
-                  </Badge>
+                  </span>
                 </td>
-                <td className="px-4 py-3 text-sm text-muted-foreground hidden lg:table-cell">
+                <td className="px-6 py-4 text-white/40 hidden lg:table-cell uppercase">
                   {getPlatformLabel(app.platform)}
                 </td>
-                <td className="px-4 py-3 hidden sm:table-cell">
-                  <Badge variant="outline" className="text-xs">
+                <td className="px-6 py-4 hidden sm:table-cell">
+                  <span className="text-white/40 uppercase">
                     {getJobTypeLabel(app.jobType)}
-                  </Badge>
+                  </span>
                 </td>
-                <td className="px-4 py-3 text-sm text-muted-foreground hidden xl:table-cell">
-                  {app.salaryMin && app.salaryMax
-                    ? `${formatCurrency(app.salaryMin)} - ${formatCurrency(app.salaryMax)}`
-                    : app.salaryMax
-                    ? formatCurrency(app.salaryMax)
-                    : "-"}
-                </td>
-                <td className="px-4 py-3 hidden md:table-cell">
-                  <div className="flex items-center gap-1.5">
-                    <div className="h-2 w-12 rounded-full bg-muted overflow-hidden">
+                <td className="px-6 py-4 hidden md:table-cell">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-16 border border-white/20 bg-black p-0.5 overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${calculateApplicationScore(app)}%` }}
-                        className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
+                        className="h-full bg-[#8B5CF6]"
                       />
                     </div>
-                    <span className="text-xs text-muted-foreground">{calculateApplicationScore(app)}</span>
+                    <span className="text-[#8B5CF6] font-black">{calculateApplicationScore(app)}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm text-muted-foreground hidden sm:table-cell">
+                <td className="px-6 py-4 text-white/40 hidden sm:table-cell uppercase tracking-tighter">
                   {formatDate(app.appliedDate)}
                 </td>
-                <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10 rounded-none border border-transparent hover:border-white/20 transition-all">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className="bg-black border-[2px] border-white rounded-none p-1 min-w-[160px]">
                       {app.jobLink && (
-                        <DropdownMenuItem asChild>
+                        <DropdownMenuItem asChild className="rounded-none hover:bg-white hover:text-black font-black uppercase text-[10px] cursor-pointer">
                           <a href={app.jobLink} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            Open Job Link
+                            <ExternalLink className="mr-2 h-3.5 w-3.5" />
+                            EXTERNAL_LINK
                           </a>
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem onClick={() => handleArchive(app.id)}>
-                        <Archive className="mr-2 h-4 w-4" />
-                        Archive
+                      <DropdownMenuItem onClick={() => handleArchive(app.id)} className="rounded-none hover:bg-white hover:text-black font-black uppercase text-[10px] cursor-pointer">
+                        <Archive className="mr-2 h-3.5 w-3.5" />
+                        ARCHIVE_INIT
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
+                      <DropdownMenuSeparator className="bg-white/10 my-1" />
                       <DropdownMenuItem
-                        className="text-red-500"
+                        className="rounded-none hover:bg-[#EF4444] hover:text-white font-black uppercase text-[10px] cursor-pointer text-[#EF4444]"
                         onClick={() => handleDelete(app.id)}
                       >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
+                        <Trash2 className="mr-2 h-3.5 w-3.5" />
+                        PURGE_UNIT
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

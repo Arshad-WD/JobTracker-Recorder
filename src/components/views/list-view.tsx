@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
+  cn,
   getStatusColor,
   getStatusLabel,
   getPriorityColor,
@@ -39,71 +40,71 @@ export function ListView({ applications, onSelect }: ListViewProps) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-6">
       {applications.map((app, i) => (
         <motion.div
           key={app.id}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.03 }}
-          className="group p-4 rounded-xl border bg-card/50 backdrop-blur-sm hover:border-primary/30 hover:shadow-md transition-all cursor-pointer"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: i * 0.05 }}
+          className="group relative border-[3px] border-white bg-black p-6 hover:translate-x-1 hover:-translate-y-1 transition-all cursor-pointer overflow-hidden"
           onClick={() => onSelect(app.id)}
+          style={{ boxShadow: "8px 8px 0px rgba(139, 92, 246, 0.3)" }}
         >
-          <div className="flex items-start gap-4">
-            {/* Company avatar */}
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center flex-shrink-0">
-              <span className="text-lg font-bold">{app.companyName.charAt(0)}</span>
+          <div className="monolith-scanlines rounded-none" />
+          
+          <div className="relative z-10 flex flex-col md:flex-row gap-6">
+            {/* Company Avatar / Unit ID */}
+            <div className="flex-shrink-0">
+               <div className="h-20 w-20 border-[3px] border-white bg-white flex items-center justify-center text-black">
+                  <span className="text-4xl font-black uppercase">{app.companyName.charAt(0)}</span>
+               </div>
+               <div className="mt-2 text-center text-[8px] font-mono font-black text-white/40 uppercase tracking-[0.2em]">
+                  NODE_ID_{app.id.slice(-4)}
+               </div>
             </div>
 
-            {/* Main content */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-start justify-between gap-2">
+            {/* Main Content */}
+            <div className="flex-1 min-w-0 space-y-4">
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div>
-                  <h3 className="font-semibold">{app.companyName}</h3>
-                  <p className="text-sm text-muted-foreground">{app.positionTitle}</p>
+                  <h3 className="text-2xl font-black uppercase tracking-tighter text-white group-hover:text-[#8B5CF6] transition-colors leading-none">
+                    {app.companyName}
+                  </h3>
+                  <p className="text-[10px] font-mono font-black uppercase tracking-widest text-white/40 mt-1">
+                    TARGET_ENTRY // {app.positionTitle}
+                  </p>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <Badge className={getStatusColor(app.status)} variant="outline">
+                <div className="flex items-center gap-3">
+                  <span className={cn(
+                    "px-4 py-1.5 border-[2px] font-black text-[10px] uppercase tracking-widest bg-black",
+                    app.status === "OFFER" ? "border-[#22C55E] text-[#22C55E]" : 
+                    app.status === "REJECTED" ? "border-[#EF4444] text-[#EF4444]" : 
+                    "border-white text-white"
+                  )}>
                     {getStatusLabel(app.status)}
-                  </Badge>
-                  <Badge className={getPriorityColor(app.priority)} variant="outline">
-                    {app.priority}
-                  </Badge>
+                  </span>
+                  <div className="px-3 py-1.5 border-[2px] border-[#8B5CF6] text-[#8B5CF6] bg-[#8B5CF6]/5 font-black text-[10px] uppercase tracking-widest">
+                    P_{app.priority}
+                  </div>
                 </div>
               </div>
 
-              {/* Meta info */}
-              <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground flex-wrap">
-                {app.location && (
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-3 w-3" />
-                    {app.location}
-                  </span>
-                )}
-                <span className="flex items-center gap-1">
-                  <Calendar className="h-3 w-3" />
-                  {formatDate(app.appliedDate)}
-                </span>
-                <span>{getPlatformLabel(app.platform)}</span>
-                <Badge variant="outline" className="text-xs">{getJobTypeLabel(app.jobType)}</Badge>
-                {(app.salaryMin || app.salaryMax) && (
-                  <span>
-                    {app.salaryMin && app.salaryMax
-                      ? `${formatCurrency(app.salaryMin)} - ${formatCurrency(app.salaryMax)}`
-                      : app.salaryMax
-                      ? `Up to ${formatCurrency(app.salaryMax)}`
-                      : ""}
-                  </span>
-                )}
+              {/* Technical Stats Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-y border-white/10">
+                <TechnicalStat label="LOCATION_REF" value={app.location} />
+                <TechnicalStat label="DEPLOY_DATE" value={formatDate(app.appliedDate)} />
+                <TechnicalStat label="UPSTREAM_SRC" value={getPlatformLabel(app.platform)} />
+                <TechnicalStat label="MATCH_SCORE" value={`${calculateApplicationScore(app)}%`} />
               </div>
 
-              {/* Tags */}
+              {/* Tags Area */}
               {app.tags.length > 0 && (
-                <div className="flex gap-1.5 mt-2 flex-wrap">
+                <div className="flex gap-2 flex-wrap">
                   {app.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground"
+                      className="text-[9px] font-black px-2 py-0.5 border border-white/20 text-white/40 uppercase tracking-widest bg-white/5"
                     >
                       {tag}
                     </span>
@@ -111,52 +112,37 @@ export function ListView({ applications, onSelect }: ListViewProps) {
                 </div>
               )}
 
-              {/* Recruiter info */}
-              {(app.recruiterName || app.recruiterEmail || app.recruiterPhone) && (
-                <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                  {app.recruiterName && (
-                    <span className="flex items-center gap-1">
-                      <User className="h-3 w-3" />
-                      {app.recruiterName}
-                    </span>
-                  )}
-                  {app.recruiterEmail && (
-                    <span className="flex items-center gap-1">
-                      <Mail className="h-3 w-3" />
-                      {app.recruiterEmail}
-                    </span>
-                  )}
-                  {app.recruiterPhone && (
-                    <span className="flex items-center gap-1">
-                      <Phone className="h-3 w-3" />
-                      {app.recruiterPhone}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              {/* Score & interviews */}
-              <div className="flex items-center gap-4 mt-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-xs text-muted-foreground">Score:</span>
-                  <div className="h-1.5 w-16 rounded-full bg-muted overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
-                      style={{ width: `${calculateApplicationScore(app)}%` }}
-                    />
-                  </div>
-                  <span className="text-xs font-medium">{calculateApplicationScore(app)}</span>
-                </div>
+              {/* Footer Protocol Info */}
+              <div className="flex items-center gap-6 pt-2">
                 {app.interviews.length > 0 && (
-                  <span className="text-xs text-muted-foreground">
-                    {app.interviews.length} interview(s)
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 bg-[#22C55E] animate-pulse" />
+                    <span className="text-[10px] font-mono font-black uppercase text-[#22C55E]">
+                      ACTIVE_PROTOCOL: {app.interviews.length} PHASES_DETECTED
+                    </span>
+                  </div>
+                )}
+                {app.salaryMax && (
+                   <span className="text-[10px] font-mono font-black uppercase text-white/40 ml-auto">
+                     COMP_RANGE: {formatCurrency(app.salaryMax)}
+                   </span>
                 )}
               </div>
             </div>
           </div>
         </motion.div>
       ))}
+    </div>
+  );
+}
+
+function TechnicalStat({ label, value }: { label: string; value?: string | null }) {
+  return (
+    <div className="space-y-1">
+      <p className="font-mono text-[8px] text-white/20 uppercase tracking-[0.3em]">{label}</p>
+      <p className="text-[10px] font-black uppercase tracking-widest text-white truncate">
+        {value || "N/A"}
+      </p>
     </div>
   );
 }

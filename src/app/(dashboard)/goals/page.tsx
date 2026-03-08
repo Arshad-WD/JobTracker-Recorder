@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState, useTransition } from "react";
+import MonolithButton from "@/components/neon/MonolithButton";
+import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import {
   Target,
@@ -153,26 +155,23 @@ export default function GoalsPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-12">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b-[3px] border-white pb-8">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-              <Target className="h-5 w-5 text-white" />
-            </div>
-            Goals & Streaks
+          <h1 className="text-5xl font-black tracking-tighter uppercase leading-none">
+            PERSISTENCE_DRIVE
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Stay on track with your job search
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.4em] text-white/40 mt-4">
+            GOALS_AND_STREAK_MONITORING // STATUS: ACTIVE
           </p>
         </div>
-        <Button
+        <MonolithButton
           onClick={() => setShowForm(!showForm)}
-          className="gap-2"
+          variant="black"
+          className="md:w-auto"
         >
-          <Plus className="h-4 w-4" />
-          New Goal
-        </Button>
+          {showForm ? "ABORT_ENTRY" : "INITIALIZE_NEW_GOAL"}
+        </MonolithButton>
       </div>
 
       {/* Streak Cards */}
@@ -180,131 +179,106 @@ export default function GoalsPage() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
       >
-        <motion.div variants={item}>
-          <Card className="border-0 bg-gradient-to-br from-orange-500/10 to-amber-500/10 backdrop-blur-sm">
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-orange-500/20 flex items-center justify-center">
-                <Flame className="h-7 w-7 text-orange-400" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Current Streak</p>
-                <p className="text-3xl font-bold">
-                  {streak?.currentStreak || 0}
-                  <span className="text-lg font-normal text-muted-foreground ml-1">
-                    days
-                  </span>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div variants={item}>
-          <Card className="border-0 bg-gradient-to-br from-yellow-500/10 to-amber-500/10 backdrop-blur-sm">
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-yellow-500/20 flex items-center justify-center">
-                <Trophy className="h-7 w-7 text-yellow-400" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Longest Streak</p>
-                <p className="text-3xl font-bold">
-                  {streak?.longestStreak || 0}
-                  <span className="text-lg font-normal text-muted-foreground ml-1">
-                    days
-                  </span>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        <motion.div variants={item}>
-          <Card className="border-0 bg-gradient-to-br from-violet-500/10 to-purple-500/10 backdrop-blur-sm">
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-violet-500/20 flex items-center justify-center">
-                <Zap className="h-7 w-7 text-violet-400" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Active Goals</p>
-                <p className="text-3xl font-bold">{goals.length}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+        <StreakBlock
+          icon={Flame}
+          label="CURRENT_STREAK"
+          value={streak?.currentStreak || 0}
+          unit="DAYS"
+          color="#F97316"
+        />
+        <StreakBlock
+          icon={Trophy}
+          label="PEAK_RECORD"
+          value={streak?.longestStreak || 0}
+          unit="DAYS"
+          color="#FBBF24"
+        />
+        <StreakBlock
+          icon={Zap}
+          label="ACTIVE_NODES"
+          value={goals.length}
+          unit="UNITS"
+          color="#8B5CF6"
+        />
       </motion.div>
 
       {/* New Goal Form */}
       {showForm && (
         <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
+           initial={{ opacity: 0, scale: 0.95 }}
+           animate={{ opacity: 1, scale: 1 }}
         >
-          <Card className="border-0 bg-card/50 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-lg">Create New Goal</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Goal Title</Label>
-                <input
-                  className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  placeholder="e.g. Apply to 10 companies this week"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Type</Label>
-                  <Select
-                    value={formData.goalType}
-                    onValueChange={(v) =>
-                      setFormData({ ...formData, goalType: v })
-                    }
+          <div className="border-[3px] border-white bg-black p-8 relative overflow-hidden">
+             <div className="monolith-scanlines" />
+             <div className="relative z-10 space-y-6">
+                <h2 className="text-xl font-black uppercase tracking-widest text-white border-b border-white/10 pb-4">
+                   NEW_GOAL_CONFIGURATION
+                </h2>
+                
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="font-mono text-[10px] font-black uppercase tracking-widest text-white/40">GOAL_IDENTIFIER</Label>
+                    <input
+                      className="w-full bg-black border-[2px] border-white/20 p-4 font-mono text-sm text-white outline-none focus:border-[#8B5CF6] transition-colors rounded-none"
+                      value={formData.title}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
+                      placeholder="ENTER_OBJECTIVE_DESCRIPTION..."
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="font-mono text-[10px] font-black uppercase tracking-widest text-white/40">LOGIC_TYPE</Label>
+                      <Select
+                        value={formData.goalType}
+                        onValueChange={(v) =>
+                          setFormData({ ...formData, goalType: v })
+                        }
+                      >
+                        <SelectTrigger className="bg-black border-[2px] border-white/20 h-14 rounded-none font-mono text-xs uppercase">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-black border-[2px] border-white rounded-none">
+                          {Object.entries(GOAL_TYPE_LABELS).map(([key, label]) => (
+                            <SelectItem key={key} value={key} className="font-mono text-xs uppercase hover:bg-white hover:text-black rounded-none">
+                              {label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="font-mono text-[10px] font-black uppercase tracking-widest text-white/40">TARGET_THRESHOLD</Label>
+                      <input
+                        type="number"
+                        min="1"
+                        className="w-full bg-black border-[2px] border-white/20 p-4 h-[56px] font-mono text-sm text-white outline-none focus:border-[#8B5CF6] transition-colors rounded-none"
+                        value={formData.targetCount}
+                        onChange={(e) =>
+                          setFormData({ ...formData, targetCount: e.target.value })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                  <MonolithButton onClick={handleCreate} disabled={isPending} glitch className="flex-1">
+                    {isPending ? "UPLOADING..." : "COMMIT_OBJECTIVE"}
+                  </MonolithButton>
+                  <MonolithButton
+                    variant="black"
+                    onClick={() => setShowForm(false)}
                   >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(GOAL_TYPE_LABELS).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    CANCEL
+                  </MonolithButton>
                 </div>
-                <div className="space-y-2">
-                  <Label>Target Count</Label>
-                  <input
-                    type="number"
-                    min="1"
-                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                    value={formData.targetCount}
-                    onChange={(e) =>
-                      setFormData({ ...formData, targetCount: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button onClick={handleCreate} disabled={isPending} className="gap-2">
-                  {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Create Goal
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowForm(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+             </div>
+          </div>
         </motion.div>
       )}
 
@@ -313,94 +287,131 @@ export default function GoalsPage() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="space-y-4"
+        className="space-y-8"
       >
         {goals.length === 0 ? (
-          <Card className="border-0 bg-card/50 backdrop-blur-sm">
-            <CardContent className="py-16 flex flex-col items-center justify-center text-center space-y-3">
-              <div className="h-16 w-16 rounded-2xl bg-muted/50 flex items-center justify-center">
-                <Target className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="font-semibold">No Goals Yet</h3>
-              <p className="text-sm text-muted-foreground max-w-sm">
-                Set goals to track your progress and stay motivated during your job
-                search
-              </p>
-              <Button
-                onClick={() => setShowForm(true)}
-                className="gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Create Your First Goal
-              </Button>
-            </CardContent>
-          </Card>
+          <div className="border-[3px] border-white/10 bg-black p-20 flex flex-col items-center justify-center text-center space-y-6">
+             <div className="h-24 w-24 border-[3px] border-white/10 flex items-center justify-center">
+                <Target className="h-10 w-10 text-white/20" />
+             </div>
+             <div>
+                <h3 className="text-xl font-black uppercase tracking-widest">NO_OBJECTIVES_DETECTED</h3>
+                <p className="font-mono text-xs text-white/40 uppercase tracking-widest mt-2">
+                  SYSTEM AI AWAITS DIRECTIVES // INITIALIZE FIRST GOAL
+                </p>
+             </div>
+             {!showForm && (
+               <MonolithButton onClick={() => setShowForm(true)} glitch>
+                  BOOT_FIRST_GOAL
+               </MonolithButton>
+             )}
+          </div>
         ) : (
-          goals.map((goal) => {
-            const progress = Math.min(
-              Math.round((goal.currentCount / goal.targetCount) * 100),
-              100
-            );
-            const isComplete = goal.currentCount >= goal.targetCount;
+          <div className="grid grid-cols-1 gap-6">
+            {goals.map((goal) => {
+              const progress = Math.min(
+                Math.round((goal.currentCount / goal.targetCount) * 100),
+                100
+              );
+              const isComplete = goal.currentCount >= goal.targetCount;
 
-            return (
-              <motion.div key={goal.id} variants={item}>
-                <Card className="border-0 bg-card/50 backdrop-blur-sm hover:shadow-md transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="font-bold text-base">{goal.title}</h3>
-                        <p className="text-xs text-muted-foreground">
-                          {GOAL_TYPE_LABELS[goal.goalType] || goal.goalType}
-                        </p>
+              return (
+                <motion.div key={goal.id} variants={item}>
+                  <div className="border-[3px] border-white bg-black p-8 group hover:border-[#8B5CF6] transition-all relative overflow-hidden">
+                    <div className="monolith-scanlines rounded-none" />
+                    
+                    <div className="relative z-10">
+                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
+                        <div>
+                          <div className="flex items-center gap-3 mb-2">
+                             <div className={cn(
+                               "w-2 h-2 rounded-none",
+                               isComplete ? "bg-[#22C55E] shadow-[0_0_8px_#22C55E]" : "bg-[#8B5CF6] shadow-[0_0_8px_#8B5CF6]"
+                             )} />
+                             <h3 className="text-2xl font-black uppercase tracking-tight text-white">{goal.title}</h3>
+                          </div>
+                          <p className="font-mono text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
+                             TYPE: {GOAL_TYPE_LABELS[goal.goalType] || goal.goalType} // ID: {goal.id.slice(0, 8)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          {isComplete && (
+                            <span className="font-mono text-[10px] font-black text-[#22C55E] border-[2px] border-[#22C55E] px-4 py-1 uppercase tracking-widest bg-[#22C55E]/5 backdrop-blur-sm">
+                              GOAL_REACHED
+                            </span>
+                          )}
+                          <button
+                            className="h-10 w-10 border-[2px] border-white/20 flex items-center justify-center hover:bg-[#EF4444] hover:border-[#EF4444] transition-all text-white/40 hover:text-white"
+                            onClick={() => handleDelete(goal.id)}
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {isComplete && (
-                          <span className="text-xs font-medium text-green-400 bg-green-500/10 px-2 py-1 rounded-full">
-                            ✓ Complete
-                          </span>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                          onClick={() => handleDelete(goal.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+
+                      <div className="space-y-4">
+                        <div className="flex items-end justify-between font-mono">
+                          <div className="space-y-1">
+                             <p className="text-[8px] text-white/20 uppercase tracking-[0.4em]">CURRENT_PERFORMANCE</p>
+                             <p className="text-xl font-black text-white">
+                                {goal.currentCount} <span className="text-xs text-white/20">OUT_OF</span> {goal.targetCount}
+                             </p>
+                          </div>
+                          <div className="text-right space-y-1">
+                             <p className="text-[8px] text-white/20 uppercase tracking-[0.4em]">DRIVE_PERCENT</p>
+                             <p className={cn(
+                               "text-xl font-black",
+                               isComplete ? "text-[#22C55E]" : "text-[#8B5CF6]"
+                             )}>{progress}%</p>
+                          </div>
+                        </div>
+
+                        <div className="h-4 w-full border-[2px] border-white/20 bg-black overflow-hidden p-0.5 relative">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progress}%` }}
+                            transition={{ duration: 1.5, ease: "circOut" }}
+                            className={cn(
+                              "h-full relative z-10",
+                              isComplete ? "bg-[#22C55E] shadow-[0_0_15px_#22C55E]" : "bg-[#8B5CF6] shadow-[0_0_15px_#8B5CF6]"
+                            )}
+                          />
+                          <div className="absolute inset-0 bg-white/5 opacity-20 pointer-events-none" 
+                             style={{ backgroundSize: '4px 4px', backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />
+                        </div>
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          {goal.currentCount} / {goal.targetCount}
-                        </span>
-                        <span className="font-medium">{progress}%</span>
-                      </div>
-                      <div className="h-2.5 rounded-full bg-muted overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${progress}%` }}
-                          transition={{
-                            duration: 0.8,
-                            ease: "easeOut",
-                            delay: 0.2,
-                          }}
-                          className={`h-full rounded-full ${
-                            isComplete
-                              ? "bg-gradient-to-r from-green-500 to-emerald-500"
-                              : "bg-gradient-to-r from-violet-500 to-purple-500"
-                          }`}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         )}
       </motion.div>
     </div>
+  );
+}
+
+function StreakBlock({ icon: Icon, label, value, unit, color }: any) {
+  return (
+    <motion.div variants={item} className="group">
+       <div className="border-[3px] border-white bg-black p-8 relative overflow-hidden hover:border-white transition-all">
+          <div className="monolith-scanlines" />
+          <div className="absolute top-0 right-0 w-16 h-16 bg-white/5 -mr-8 -mt-8 rotate-45 group-hover:bg-white/10 transition-all" />
+          
+          <div className="relative z-10 flex items-center gap-6">
+             <div className="h-16 w-16 border-[3px] border-white bg-black flex items-center justify-center" style={{ boxShadow: `6px 6px 0px ${color}` }}>
+                <Icon className="h-7 w-7" style={{ color }} />
+             </div>
+             <div>
+                <p className="font-mono text-[8px] text-white/40 uppercase tracking-[0.4em] mb-1">{label}</p>
+                <div className="flex items-baseline gap-2">
+                   <p className="text-4xl font-black tracking-tighter text-white">{value}</p>
+                   <p className="font-mono text-[10px] font-black uppercase text-white/20">{unit}</p>
+                </div>
+             </div>
+          </div>
+       </div>
+    </motion.div>
   );
 }

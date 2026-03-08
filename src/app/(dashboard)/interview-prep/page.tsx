@@ -34,6 +34,8 @@ import {
 import { getApplications } from "@/server/actions";
 import { toast } from "sonner";
 import type { Application, Interview } from "@prisma/client";
+import MonolithButton from "@/components/neon/MonolithButton";
+import { cn } from "@/lib/utils";
 
 type AppWithInterviews = Application & { interviews: Interview[] };
 
@@ -95,58 +97,46 @@ function parseQuestions(raw: string): ParsedQuestion[] {
 const CATEGORIES = [
   {
     id: "technical",
-    label: "Technical",
+    label: "TECHNICAL_CORE",
     icon: Cpu,
-    desc: "Coding & algorithms",
-    gradient: "from-blue-500 to-cyan-500",
-    glow: "rgba(59, 130, 246, 0.15)",
-    text: "text-blue-400",
-    bg: "bg-blue-500/10",
-    border: "border-blue-500/15",
-    ring: "ring-blue-500/20",
+    desc: "LOGIC & ALGORITHMS",
+    color: "#8B5CF6",
+    bg: "bg-[#8B5CF6]/5",
+    border: "border-[#8B5CF6]",
   },
   {
     id: "behavioral",
-    label: "Behavioral",
+    label: "BEHAVIORAL_DRIVE",
     icon: Users,
-    desc: "STAR method prep",
-    gradient: "from-emerald-500 to-green-500",
-    glow: "rgba(16, 185, 129, 0.15)",
-    text: "text-emerald-400",
-    bg: "bg-emerald-500/10",
-    border: "border-emerald-500/15",
-    ring: "ring-emerald-500/20",
+    desc: "STAR PROTOCOL PREP",
+    color: "#22C55E",
+    bg: "bg-[#22C55E]/5",
+    border: "border-[#22C55E]",
   },
   {
     id: "system_design",
-    label: "System Design",
+    label: "SYS_ARCHITECTURE",
     icon: Brain,
-    desc: "Architecture questions",
-    gradient: "from-violet-500 to-purple-500",
-    glow: "rgba(139, 92, 246, 0.15)",
-    text: "text-violet-400",
-    bg: "bg-violet-500/10",
-    border: "border-violet-500/15",
-    ring: "ring-violet-500/20",
+    desc: "INFRASTRUCTURE DESIGN",
+    color: "#8B5CF6",
+    bg: "bg-[#8B5CF6]/5",
+    border: "border-[#8B5CF6]",
   },
   {
     id: "culture_fit",
-    label: "Culture Fit",
+    label: "CULTURE_SYNC",
     icon: Heart,
-    desc: "Values & team fit",
-    gradient: "from-pink-500 to-rose-500",
-    glow: "rgba(236, 72, 153, 0.15)",
-    text: "text-pink-400",
-    bg: "bg-pink-500/10",
-    border: "border-pink-500/15",
-    ring: "ring-pink-500/20",
+    desc: "VALUES & TEAM FIT",
+    color: "#EF4444",
+    bg: "bg-[#EF4444]/5",
+    border: "border-[#EF4444]",
   },
 ];
 
 const difficultyStyles: Record<string, string> = {
-  Easy: "bg-emerald-500/10 text-emerald-400 border-emerald-500/15",
-  Medium: "bg-amber-500/10 text-amber-400 border-amber-500/15",
-  Hard: "bg-rose-500/10 text-rose-400 border-rose-500/15",
+  Easy: "border-[#22C55E] text-[#22C55E] bg-[#22C55E]/5",
+  Medium: "border-[#FBBF24] text-[#FBBF24] bg-[#FBBF24]/5",
+  Hard: "border-[#EF4444] text-[#EF4444] bg-[#EF4444]/5",
 };
 
 export default function InterviewPrepPage() {
@@ -173,7 +163,7 @@ export default function InterviewPrepPage() {
         setResumeText(ev.target?.result as string);
         setResumeFileName(file.name);
         setResumeExpanded(true);
-        toast.success("Resume loaded successfully");
+        toast.success("RESUME_LOADED");
       };
       reader.readAsText(file);
     } else if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
@@ -193,17 +183,17 @@ export default function InterviewPrepPage() {
           setResumeText(data.text);
           setResumeFileName(file.name);
           setResumeExpanded(true);
-          toast.success("PDF resume loaded successfully");
+          toast.success("PDF_RESUME_PARSED");
         } else {
-          toast.error(data.error || "Failed to parse PDF");
+          toast.error(data.error || "FAILED_PARSE");
         }
       } catch (err) {
-        toast.error("Error connected to PDF parser");
+        toast.error("INTERFACE_ERROR");
       } finally {
         setLoading(false);
       }
     } else {
-      toast.error("Unsupported file type. Please use .txt or .pdf.");
+      toast.error("UNSUPPORTED_TYPE");
     }
     e.target.value = "";
   };
@@ -227,7 +217,7 @@ export default function InterviewPrepPage() {
 
   const generateQuestions = async () => {
     if (!selectedApp) {
-      toast.error("Please select an application first");
+      toast.error("SELECT_TARGET_UNIT");
       return;
     }
 
@@ -254,7 +244,7 @@ export default function InterviewPrepPage() {
         if (data.error === "AI not configured") {
           setError("configure");
         } else {
-          setError(data.message || "Failed to generate");
+          setError(data.message || "GENERATION_FAILURE");
         }
         return;
       }
@@ -265,7 +255,7 @@ export default function InterviewPrepPage() {
       }));
       setExpandedQ(null);
     } catch {
-      setError("Failed to connect to AI");
+      setError("AI_CONNECTION_LOST");
     } finally {
       setLoading(false);
     }
@@ -277,492 +267,223 @@ export default function InterviewPrepPage() {
     if (!text) return;
     await navigator.clipboard.writeText(text);
     setCopied(true);
-    toast.success("Copied to clipboard");
+    toast.success("DATA_COPIED");
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="space-y-8 max-w-5xl">
+    <div className="space-y-12 max-w-6xl">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-[3px] border-white pb-8">
         <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-11 w-11 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
-              <Brain className="h-5 w-5 text-white" />
-            </div>
-            <h1 className="text-3xl font-bold tracking-tight">Interview Prep</h1>
-          </div>
-          <p className="text-muted-foreground text-sm ml-14">
-            AI-powered questions tailored to your applications
+          <h1 className="text-5xl font-black tracking-tighter uppercase leading-none">
+            INTERVIEW_PREP_ENGINE
+          </h1>
+          <p className="font-mono text-[10px] font-black uppercase tracking-[0.4em] text-white/40 mt-4">
+            AI_DRIVEN_SCENARIO_GENERATOR // STATUS: READY
           </p>
         </div>
       </div>
 
-      {/* Application Selector — Glass Bubble */}
-      <div className="glass-bubble p-5 sm:p-6" style={{ borderRadius: "20px" }}>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
-              <Target className="w-4 h-4 text-white/40" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-white/30 uppercase tracking-wider mb-1">
-                Target Application
-              </p>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column: Configuration */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Target Selector */}
+          <div className="border-[3px] border-white bg-black p-6 relative overflow-hidden group">
+            <div className="monolith-scanlines" />
+            <div className="relative z-10 space-y-4">
+              <label className="font-mono text-[10px] font-black uppercase tracking-widest text-white/40 block">TARGET_APPLICATION</label>
               <Select value={selectedAppId} onValueChange={setSelectedAppId}>
-                <SelectTrigger className="w-[280px] sm:w-[340px] border-white/10 bg-white/[0.03] text-sm">
-                  <SelectValue placeholder="Select an application..." />
+                <SelectTrigger className="w-full bg-black border-[2px] border-white/20 h-14 rounded-none font-mono text-xs uppercase hover:border-white transition-colors">
+                  <SelectValue placeholder="SELECT_UNIT..." />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-black border-[2px] border-white rounded-none">
                   {applications.map((app) => (
-                    <SelectItem key={app.id} value={app.id}>
-                      {app.companyName} — {app.positionTitle}
+                    <SelectItem key={app.id} value={app.id} className="font-mono text-xs uppercase hover:bg-white hover:text-black rounded-none">
+                      {app.companyName} // {app.positionTitle}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-          {selectedApp && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="flex items-center gap-2"
-            >
-              <span className="text-[11px] px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/30 font-medium">
-                {selectedApp.status}
-              </span>
-              {selectedApp.jobType && (
-                <span className="text-[11px] px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/30 font-medium">
-                  {selectedApp.jobType}
-                </span>
+              {selectedApp && (
+                <div className="flex gap-2 pt-2">
+                   <span className="text-[9px] font-black px-2 py-0.5 border border-[#8B5CF6] text-[#8B5CF6] uppercase tracking-widest bg-[#8B5CF6]/5">
+                      {selectedApp.status}
+                   </span>
+                   <span className="text-[9px] font-black px-2 py-0.5 border border-white/20 text-white/40 uppercase tracking-widest bg-white/5">
+                      {selectedApp.jobType}
+                   </span>
+                </div>
               )}
-            </motion.div>
-          )}
-        </div>
-      </div>
-
-      {/* Resume Input — Glass Bubble */}
-      <div className="glass-bubble overflow-hidden" style={{ borderRadius: "20px" }}>
-        <button
-          onClick={() => setResumeExpanded(!resumeExpanded)}
-          className="w-full flex items-center justify-between p-5 sm:p-6 text-left hover:bg-white/[0.01] transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center shrink-0">
-              <FileText className="w-4 h-4 text-white/40" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-white/70 flex items-center gap-2">
-                Resume
-                {resumeText && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/15 text-emerald-400 font-semibold">
-                    Loaded
-                  </span>
-                )}
-              </p>
-              <p className="text-[11px] text-white/25 mt-0.5">
-                {resumeText
-                  ? `${resumeText.length.toLocaleString()} characters${resumeFileName ? ` · ${resumeFileName}` : ""}`
-                  : "Paste or upload your resume for tailored questions"}
-              </p>
             </div>
           </div>
-          <ChevronDown
-            className={`w-4 h-4 text-white/20 transition-transform duration-300 ${
-              resumeExpanded ? "rotate-180" : ""
-            }`}
-          />
-        </button>
 
-        <AnimatePresence>
-          {resumeExpanded && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="overflow-hidden"
-            >
-              <div className="px-5 sm:px-6 pb-5 sm:pb-6 space-y-3">
-                <textarea
-                  value={resumeText}
-                  onChange={(e) => {
-                    setResumeText(e.target.value);
-                    setResumeFileName(null);
-                  }}
-                  placeholder="Paste your resume text here... The AI will tailor interview questions based on your skills, experience, and projects."
-                  className="w-full h-40 resize-none rounded-xl bg-white/[0.02] border border-white/[0.06] p-4 text-sm text-white/60 placeholder:text-white/15 focus:outline-none focus:border-white/15 focus:ring-1 focus:ring-white/10 transition-all"
-                />
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2">
-                    <label className="glass-btn px-3 py-1.5 rounded-xl text-xs font-medium text-white/50 hover:text-white cursor-pointer flex items-center gap-1.5 border-white/10">
-                      <Upload className="w-3.5 h-3.5" />
-                      Upload .txt / .pdf
-                      <input
-                        type="file"
-                        accept=".txt,.text,.pdf"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                      />
+          {/* Resume Block */}
+          <div className="border-[3px] border-white bg-black p-6 relative overflow-hidden group">
+            <div className="monolith-scanlines" />
+            <div className="relative z-10 space-y-4">
+               <div className="flex items-center justify-between">
+                  <label className="font-mono text-[10px] font-black uppercase tracking-widest text-white/40 block">RESUME_BUFFER</label>
+                  {resumeText && <span className="text-[8px] font-black text-[#22C55E] animate-pulse">LOADED_OK</span>}
+               </div>
+               
+               <div className="relative group">
+                 <textarea
+                    value={resumeText}
+                    onChange={(e) => setResumeText(e.target.value)}
+                    className="w-full bg-black border-[2px] border-white/20 p-4 h-40 font-mono text-[11px] text-white/60 outline-none focus:border-[#8B5CF6] transition-colors rounded-none resize-none"
+                    placeholder="PASTE_RESUME_DATA_OR_UPLOAD_BELOW..."
+                 />
+                 <div className="absolute bottom-2 right-2 flex gap-2">
+                    <label className="h-8 w-8 border border-white/20 flex items-center justify-center bg-black hover:bg-white hover:text-black cursor-pointer transition-all">
+                       <Upload className="h-3.5 w-3.5" />
+                       <input type="file" accept=".txt,.text,.pdf" onChange={handleFileUpload} className="hidden" />
                     </label>
                     {resumeText && (
-                      <button
-                        onClick={() => {
-                          setResumeText("");
-                          setResumeFileName(null);
-                        }}
-                        className="glass-btn px-3 py-1.5 rounded-xl text-xs font-medium text-white/50 hover:text-rose-400 flex items-center gap-1.5 border-white/10"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                        Clear
+                      <button onClick={() => setResumeText("")} className="h-8 w-8 border border-white/20 flex items-center justify-center bg-black hover:bg-[#EF4444] hover:text-white transition-all">
+                        <X className="h-3.5 w-3.5" />
                       </button>
                     )}
-                  </div>
-                  {resumeText && (
-                    <span className="text-[10px] text-white/20">
-                      {resumeText.length.toLocaleString()} characters
-                    </span>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      {/* Category Grid — Glass Bubbles */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {CATEGORIES.map((cat) => (
-          <motion.button
-            key={cat.id}
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setSelectedCategory(cat.id)}
-            className={`relative glass-bubble-sm p-4 text-left transition-all duration-300 overflow-hidden ${
-              selectedCategory === cat.id
-                ? `ring-1 ${cat.ring} bg-white/[0.05]`
-                : "hover:bg-white/[0.03]"
-            }`}
-          >
-            {/* Active glow */}
-            {selectedCategory === cat.id && (
-              <div
-                className="absolute inset-0 rounded-2xl pointer-events-none"
-                style={{
-                  background: `radial-gradient(circle at 30% 20%, ${cat.glow}, transparent 70%)`,
-                }}
-              />
-            )}
-
-            <div className="relative">
-              <div
-                className={`h-10 w-10 rounded-xl ${cat.bg} ${cat.border} border flex items-center justify-center mb-3 transition-transform duration-300 ${
-                  selectedCategory === cat.id ? "scale-110" : ""
-                }`}
-              >
-                <cat.icon className={`h-5 w-5 ${cat.text}`} />
-              </div>
-              <p className="font-semibold text-sm text-white/80">{cat.label}</p>
-              <p className="text-[11px] text-white/30 mt-0.5">{cat.desc}</p>
+                 </div>
+               </div>
             </div>
-          </motion.button>
-        ))}
-      </div>
+          </div>
 
-      {/* Content Area — Glass Bubble */}
-      <div className="glass-bubble-lg p-6 sm:p-8 min-h-[350px] relative overflow-hidden">
-        {/* Background glow matching category */}
-        <div
-          className="absolute top-0 right-0 w-60 h-60 rounded-full blur-[100px] pointer-events-none opacity-30"
-          style={{
-            background: currentCat.glow.replace("0.15", "0.08"),
-          }}
-        />
+          <MonolithButton 
+            onClick={generateQuestions} 
+            disabled={!selectedAppId || loading} 
+            glitch 
+            className="w-full text-lg py-5"
+          >
+            {loading ? "PROCESSING..." : "RUN_PREP_SIMULATION"}
+          </MonolithButton>
+        </div>
 
-        <div className="relative">
-          {error === "configure" ? (
-            /* AI Not Configured */
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center justify-center py-14 text-center space-y-5"
-            >
-              <div className="glass-bubble w-20 h-20 flex items-center justify-center">
-                <Settings className="h-9 w-9 text-amber-400/60" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-white/80">
-                  AI Not Configured
-                </h3>
-                <p className="text-sm text-white/30 max-w-sm">
-                  Set up your AI provider in Settings to generate interview
-                  questions.
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => (window.location.href = "/settings")}
-                className="gap-2 glass-btn text-white/60 hover:text-white border-white/10"
+        {/* Right Column: Categories & Output */}
+        <div className="lg:col-span-8 space-y-8">
+          {/* Category Selector */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={cn(
+                  "border-[3px] p-4 text-left relative overflow-hidden transition-all hover:-translate-y-1",
+                  selectedCategory === cat.id ? "border-white bg-white text-black" : "border-white/10 bg-black text-white/40"
+                )}
               >
-                <Settings className="h-4 w-4" />
-                Go to Settings
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </motion.div>
-          ) : error ? (
-            /* Error State */
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center justify-center py-14 text-center space-y-4"
-            >
-              <div className="glass-bubble w-16 h-16 flex items-center justify-center">
-                <AlertCircle className="h-8 w-8 text-rose-400/60" />
-              </div>
-              <p className="text-sm text-white/40">{error}</p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={generateQuestions}
-                className="gap-1.5 glass-btn text-white/60 hover:text-white border-white/10"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                Try Again
-              </Button>
-            </motion.div>
-          ) : loading ? (
-            /* Loading State */
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-20 space-y-5"
-            >
-              <div className="relative">
-                <div className="w-20 h-20 glass-bubble flex items-center justify-center">
-                  <Loader2 className="h-8 w-8 text-white/40 animate-spin" />
+                <div className="monolith-scanlines rounded-none opacity-20" />
+                <div className="relative z-10">
+                  <cat.icon className={cn("h-5 w-5 mb-2", selectedCategory === cat.id ? "text-black" : "")} />
+                  <p className="font-black text-[10px] uppercase tracking-tighter">{cat.label}</p>
                 </div>
-                {/* Orbiting dot */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0"
-                >
-                  <div
-                    className={`absolute -top-1 left-1/2 w-2.5 h-2.5 rounded-full bg-gradient-to-r ${currentCat.gradient} shadow-lg`}
-                  />
-                </motion.div>
-              </div>
-              <div className="text-center space-y-1.5">
-                <p className="text-sm font-medium text-white/60">
-                  Generating {currentCat.label} questions...
-                </p>
-                <p className="text-xs text-white/25">
-                  Tailored for{" "}
-                  {selectedApp
-                    ? `${selectedApp.companyName} — ${selectedApp.positionTitle}`
-                    : "..."}
-                </p>
-              </div>
-            </motion.div>
-          ) : parsedQuestions.length > 0 ? (
-            /* Parsed Questions — Card Layout */
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-                <div className="flex items-center gap-2.5">
-                  <div
-                    className={`w-8 h-8 rounded-lg ${currentCat.bg} ${currentCat.border} border flex items-center justify-center`}
-                  >
-                    <Sparkles className={`h-4 w-4 ${currentCat.text}`} />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm text-white/70">
-                      {currentCat.label} Questions
-                    </h3>
-                    <p className="text-[11px] text-white/25">
-                      {selectedApp?.companyName} · {parsedQuestions.length}{" "}
-                      questions
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={generateQuestions}
-                    className="gap-1.5 glass-btn text-white/50 hover:text-white border-white/10 text-xs h-8"
-                  >
-                    <RotateCcw className="h-3 w-3" />
-                    Regenerate
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={handleCopy}
-                    className="gap-1.5 glass-cta text-white text-xs h-8 !rounded-xl"
-                  >
-                    {copied ? (
-                      <Check className="h-3 w-3" />
-                    ) : (
-                      <Copy className="h-3 w-3" />
-                    )}
-                    {copied ? "Copied!" : "Copy All"}
-                  </Button>
-                </div>
-              </div>
+              </button>
+            ))}
+          </div>
 
-              {/* Questions List */}
-              <div className="space-y-3">
-                {parsedQuestions.map((q, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="glass-bubble-sm overflow-hidden group transition-all duration-300 hover:bg-white/[0.03]"
-                  >
-                    {/* Question header — always visible */}
-                    <button
-                      onClick={() =>
-                        setExpandedQ(expandedQ === i ? null : i)
-                      }
-                      className="w-full flex items-start gap-3.5 p-4 text-left"
-                    >
-                      <span
-                        className={`flex items-center justify-center w-7 h-7 rounded-lg text-[11px] font-bold shrink-0 mt-0.5 bg-gradient-to-br ${currentCat.gradient} text-white shadow-sm`}
-                      >
-                        {i + 1}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-white/70 leading-relaxed pr-4">
-                          {q.question || q.title}
-                        </p>
-                        {q.difficulty && (
-                          <span
-                            className={`inline-block mt-2 text-[10px] font-semibold px-2 py-0.5 rounded-full border ${difficultyStyles[q.difficulty]}`}
-                          >
-                            {q.difficulty}
-                          </span>
-                        )}
-                      </div>
-                      <ChevronDown
-                        className={`w-4 h-4 text-white/20 shrink-0 mt-1 transition-transform duration-300 ${
-                          expandedQ === i ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-
-                    {/* Expanded content */}
-                    <AnimatePresence>
-                      {expandedQ === i && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.25 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="px-4 pb-4 pt-0 ml-[42px] space-y-3 border-t border-white/[0.04] pt-3">
-                            {q.hint && (
-                              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-500/[0.04] border border-amber-500/[0.08]">
-                                <Lightbulb className="w-4 h-4 text-amber-400/60 shrink-0 mt-0.5" />
-                                <p className="text-xs text-amber-200/50 leading-relaxed">
-                                  {q.hint}
-                                </p>
-                              </div>
-                            )}
-                            {q.extras.length > 0 && (
-                              <div className="space-y-1.5">
-                                {q.extras.map((extra, j) => (
-                                  <div
-                                    key={j}
-                                    className="flex items-start gap-2 text-xs text-white/30 leading-relaxed"
-                                  >
-                                    <span className="mt-1.5 w-1 h-1 rounded-full bg-white/15 shrink-0" />
-                                    {extra}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+          {/* Output Terminal */}
+          <div className="border-[3px] border-white bg-black min-h-[500px] relative overflow-hidden">
+             <div className="monolith-scanlines rounded-none" />
+             <div className="relative z-10 p-8">
+                {error === "configure" ? (
+                  <div className="py-20 flex flex-col items-center text-center space-y-6">
+                     <Settings className="h-16 w-16 text-white/20" />
+                     <h3 className="text-xl font-black uppercase tracking-widest">AI_CONFIG_ERROR</h3>
+                     <p className="font-mono text-xs text-white/40 max-w-xs uppercase">LINK_AI_PROVIDER_IN_SYSTEM_SETTINGS_TO_PROCEED</p>
+                     <MonolithButton onClick={() => window.location.href = "/settings"} variant="black">OPEN_SETTINGS</MonolithButton>
+                  </div>
+                ) : loading ? (
+                  <div className="py-20 flex flex-col items-center text-center space-y-8 text-[#8B5CF6]">
+                     <div className="relative h-24 w-24">
+                        <div className="absolute inset-0 border-[4px] border-[#8B5CF6] border-t-transparent animate-spin" />
+                        <div className="absolute inset-4 border-[2px] border-[#8B5CF6] border-b-transparent animate-spin-reverse" />
+                        <Cpu className="absolute inset-0 m-auto h-8 w-8" />
+                     </div>
+                     <div className="space-y-2">
+                        <p className="font-black text-2xl uppercase tracking-widest animate-pulse">COMPUTING_SCENARIOS</p>
+                        <p className="font-mono text-xs text-white/40 uppercase tracking-widest">ANALYZING_JOB_SPEC // TAILORING_QUESTIONS</p>
+                     </div>
+                  </div>
+                ) : parsedQuestions.length > 0 ? (
+                  <div className="space-y-8">
+                    <div className="flex items-center justify-between border-b border-white/10 pb-6">
+                       <div className="flex items-center gap-4">
+                          <div className="h-10 w-10 border-[2px] border-[#8B5CF6] flex items-center justify-center text-[#8B5CF6]">
+                             <Sparkles className="h-5 w-5" />
                           </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          ) : currentContent ? (
-            /* Fallback: raw text if parsing failed */
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-sm flex items-center gap-2 text-white/70">
-                  <Sparkles className={`h-4 w-4 ${currentCat.text}`} />
-                  {currentCat.label} Questions — {selectedApp?.companyName}
-                </h3>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={generateQuestions}
-                    className="gap-1.5 glass-btn text-white/50 hover:text-white border-white/10 text-xs h-8"
-                  >
-                    <RotateCcw className="h-3 w-3" />
-                    Regenerate
-                  </Button>
-                  <Button
-                    size="sm"
-                    onClick={handleCopy}
-                    className="gap-1.5 glass-cta text-white text-xs h-8 !rounded-xl"
-                  >
-                    {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                    {copied ? "Copied!" : "Copy"}
-                  </Button>
-                </div>
-              </div>
-              <div className="whitespace-pre-wrap text-sm leading-relaxed glass-bubble-sm p-5 text-white/40">
-                {currentContent}
-              </div>
-            </motion.div>
-          ) : (
-            /* Empty State */
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center justify-center py-20 space-y-5"
-            >
-              <div className="glass-bubble w-20 h-20 flex items-center justify-center relative">
-                <BookOpen className="h-9 w-9 text-white/20" />
-                {/* Decorative mini bubbles */}
-                <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-white/[0.03] border border-white/[0.06]" />
-                <div className="absolute -bottom-1 -left-3 w-4 h-4 rounded-full bg-white/[0.02] border border-white/[0.05]" />
-              </div>
-              <div className="text-center space-y-2">
-                <h3 className="font-semibold text-white/70">
-                  Ready to Practice?
-                </h3>
-                <p className="text-sm text-white/30 max-w-sm">
-                  {selectedApp
-                    ? `Generate ${currentCat.label} questions for ${selectedApp.companyName}`
-                    : "Select an application above to get started"}
-                </p>
-              </div>
-              <Button
-                onClick={generateQuestions}
-                disabled={!selectedAppId || isPending}
-                className="gap-2 glass-cta text-white font-semibold !rounded-2xl px-6 py-2.5"
-              >
-                <Sparkles className="h-4 w-4" />
-                Generate Questions
-              </Button>
-            </motion.div>
-          )}
+                          <div>
+                             <h2 className="text-xl font-black uppercase tracking-tight">{currentCat.label}_ROUTINE</h2>
+                             <p className="font-mono text-[9px] text-white/40 uppercase tracking-[0.2em]">{parsedQuestions.length} VECTORS_IDENTIFIED</p>
+                          </div>
+                       </div>
+                       <MonolithButton onClick={handleCopy} variant="black" className="h-10 px-4 text-xs">COPY_DATA</MonolithButton>
+                    </div>
+
+                    <div className="space-y-4">
+                       {parsedQuestions.map((q, i) => (
+                         <div key={i} className="border-[2px] border-white/10 bg-black overflow-hidden hover:border-[#8B5CF6] transition-all group">
+                            <button
+                               onClick={() => setExpandedQ(expandedQ === i ? null : i)}
+                               className="w-full text-left p-6 flex gap-6 items-start"
+                            >
+                               <span className="font-black text-2xl text-white/10 group-hover:text-[#8B5CF6] transition-colors">{(i + 1).toString().padStart(2, '0')}</span>
+                               <div className="flex-1 space-y-3">
+                                  <p className="text-sm font-black uppercase tracking-tight leading-relaxed">{q.question || q.title}</p>
+                                  {q.difficulty && (
+                                    <span className={cn("inline-block px-3 py-0.5 border-[2px] text-[8px] font-black uppercase tracking-widest", difficultyStyles[q.difficulty])}>
+                                        {q.difficulty}_LEVEL
+                                    </span>
+                                  )}
+                               </div>
+                               <ChevronDown className={cn("h-4 w-4 text-white/20 transition-transform", expandedQ === i ? "rotate-180" : "")} />
+                            </button>
+                            <AnimatePresence>
+                               {expandedQ === i && (
+                                 <motion.div
+                                    initial={{ height: 0 }}
+                                    animate={{ height: "auto" }}
+                                    exit={{ height: 0 }}
+                                    className="overflow-hidden border-t-[2px] border-white/10"
+                                 >
+                                    <div className="p-6 bg-white/[0.02] space-y-6">
+                                       {q.hint && (
+                                          <div className="border-l-[4px] border-[#FBBF24] p-4 bg-[#FBBF24]/5">
+                                             <p className="text-[8px] font-mono font-black text-[#FBBF24] uppercase tracking-widest mb-2 flex items-center gap-2">
+                                                <Lightbulb className="h-3 w-3" /> INTEL_HINT
+                                             </p>
+                                             <p className="text-xs font-mono text-white/60 leading-relaxed uppercase">{q.hint}</p>
+                                          </div>
+                                       )}
+                                       {q.extras.length > 0 && (
+                                          <div className="space-y-3">
+                                             <p className="text-[8px] font-mono font-black text-white/20 uppercase tracking-widest">SUPPLEMENTARY_DATA_POINTS</p>
+                                             <div className="grid grid-cols-1 gap-2">
+                                                {q.extras.map((extra, j) => (
+                                                  <div key={j} className="flex items-start gap-3 p-3 bg-white/5 border border-white/5">
+                                                     <div className="w-1 h-1 bg-[#8B5CF6] mt-1.5" />
+                                                     <p className="text-[10px] font-mono text-white/40 uppercase">{extra}</p>
+                                                  </div>
+                                                ))}
+                                             </div>
+                                          </div>
+                                       )}
+                                    </div>
+                                 </motion.div>
+                               )}
+                            </AnimatePresence>
+                         </div>
+                       ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="py-20 flex flex-col items-center text-center space-y-6">
+                     <BookOpen className="h-16 w-16 text-white/20" />
+                     <h3 className="text-xl font-black uppercase tracking-widest">READY_FOR_SIMULATION</h3>
+                     <p className="font-mono text-xs text-white/40 max-w-xs uppercase">SELECT_UNIT_AND_INITIALIZE_TO_GENERATE_TRAINING_SCENARIOS</p>
+                  </div>
+                )}
+             </div>
+          </div>
         </div>
       </div>
     </div>

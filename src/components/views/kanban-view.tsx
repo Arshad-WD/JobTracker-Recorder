@@ -13,7 +13,10 @@ import {
   getPlatformLabel,
   formatDate,
   calculateApplicationScore,
+  cn,
 } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { updateApplicationStatus } from "@/server/actions";
 import { useAppStore } from "@/hooks/use-store";
 import { toast } from "sonner";
@@ -68,22 +71,22 @@ export function KanbanView({ applications, onSelect }: KanbanViewProps) {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex gap-4 overflow-x-auto pb-4 -mx-2 px-2">
+      <div className="flex gap-6 overflow-x-auto pb-8 -mx-4 px-4 custom-scrollbar">
         {COLUMNS.map((column) => {
           const columnApps = getColumnApps(column.id);
           return (
             <div
               key={column.id}
-              className={`flex-shrink-0 w-72 rounded-xl border bg-card/30 backdrop-blur-sm border-t-2 ${column.color}`}
+              className="flex-shrink-0 w-80 bg-black border-[3px] border-white flex flex-col h-fit min-h-[500px]"
             >
               {/* Column header */}
-              <div className="p-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-medium text-sm">{column.label}</h3>
-                  <span className="text-xs text-muted-foreground bg-muted rounded-full px-2 py-0.5">
-                    {columnApps.length}
-                  </span>
-                </div>
+              <div className="p-4 border-b-[3px] border-white bg-white flex items-center justify-between">
+                <h3 className="font-black text-[10px] uppercase tracking-[0.2em] text-black">
+                  {column.label}_NODE
+                </h3>
+                <span className="font-mono text-[10px] font-black text-black/40">
+                  [{columnApps.length.toString().padStart(2, '0')}]
+                </span>
               </div>
 
               {/* Column content */}
@@ -92,10 +95,19 @@ export function KanbanView({ applications, onSelect }: KanbanViewProps) {
                   <div
                     ref={provided.innerRef}
                     {...provided.droppableProps}
-                    className={`min-h-[200px] p-2 space-y-2 transition-colors ${
-                      snapshot.isDraggingOver ? "bg-primary/5" : ""
-                    }`}
+                    className={cn(
+                      "flex-1 p-3 space-y-4 transition-colors",
+                      snapshot.isDraggingOver ? "bg-[#8B5CF6]/10" : "bg-transparent"
+                    )}
                   >
+                    {columnApps.length === 0 && !snapshot.isDraggingOver && (
+                      <div className="py-20 text-center opacity-10">
+                         <p className="font-mono text-[8px] uppercase tracking-widest leading-relaxed">
+                            NO_TARGETS_IN_VECTOR<br/>(AWAITING_DATA)
+                         </p>
+                      </div>
+                    )}
+                    
                     {columnApps.map((app, index) => (
                       <Draggable key={app.id} draggableId={app.id} index={index}>
                         {(provided, snapshot) => (
@@ -103,52 +115,46 @@ export function KanbanView({ applications, onSelect }: KanbanViewProps) {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
-                            className={`p-3 rounded-lg border bg-card hover:border-primary/50 transition-all cursor-pointer ${
-                              snapshot.isDragging
-                                ? "shadow-lg rotate-1 scale-105"
-                                : ""
-                            }`}
+                            className={cn(
+                              "transition-transform",
+                              snapshot.isDragging ? "z-50 rotate-2 scale-105" : ""
+                            )}
                             onClick={() => onSelect(app.id)}
                           >
-                            <div className="space-y-2">
-                              <div className="flex items-start justify-between">
-                                <p className="font-medium text-sm leading-tight">
-                                  {app.companyName}
-                                </p>
-                                <div className="flex items-center gap-1">
-                                  <span className="text-[10px] text-muted-foreground bg-muted rounded px-1.5 py-0.5">
-                                    {calculateApplicationScore(app)}
+                            <div className={cn(
+                              "bg-black border-[2px] p-4 relative group hover:border-[#8B5CF6] transition-colors",
+                              snapshot.isDragging ? "border-[#8B5CF6] shadow-[8px_8px_0px_#22C55E]" : "border-white/20"
+                            )}>
+                               <div className="flex items-start justify-between mb-3">
+                                  <h4 className="text-sm font-black uppercase tracking-tighter truncate max-w-[160px]">
+                                     {app.companyName}
+                                  </h4>
+                                  <span className="font-mono text-[8px] text-[#8B5CF6] border border-[#8B5CF6] px-1.5 py-0.5">
+                                     SC_{calculateApplicationScore(app)}
                                   </span>
-                                </div>
-                              </div>
-                              <p className="text-xs text-muted-foreground">
-                                {app.positionTitle}
-                              </p>
-                              <div className="flex items-center gap-1.5 flex-wrap">
-                                <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-                                  {getPlatformLabel(app.platform)}
-                                </Badge>
-                                {app.priority === "HIGH" && (
-                                  <Badge className="bg-rose-500/20 text-rose-400 border-rose-500/30 text-[10px] px-1.5 py-0">
-                                    High Priority
-                                  </Badge>
-                                )}
-                              </div>
-                              {app.tags.length > 0 && (
-                                <div className="flex gap-1 flex-wrap">
-                                  {app.tags.slice(0, 2).map((tag) => (
-                                    <span
-                                      key={tag}
-                                      className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground"
-                                    >
-                                      {tag}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                              <p className="text-[10px] text-muted-foreground">
-                                {formatDate(app.appliedDate)}
-                              </p>
+                               </div>
+                               
+                               <p className="font-mono text-[10px] text-white/40 uppercase truncate mb-4">
+                                  {app.positionTitle}
+                               </p>
+
+                               <div className="flex items-center gap-2 flex-wrap">
+                                  <span className="font-mono text-[8px] px-2 py-0.5 bg-white/5 text-white/60 uppercase">
+                                     {getPlatformLabel(app.platform)}
+                                  </span>
+                                  {app.priority === "HIGH" && (
+                                     <span className="font-mono text-[8px] px-2 py-0.5 bg-[#EF4444] text-black font-black uppercase">
+                                        PRIORITY_HIGH
+                                     </span>
+                                  )}
+                               </div>
+                               
+                               <div className="mt-4 pt-4 border-t border-white/10 flex justify-between items-center">
+                                  <span className="font-mono text-[8px] text-white/20 uppercase">
+                                     {formatDate(app.appliedDate)}
+                                  </span>
+                                  <ArrowRight className="h-3 w-3 text-white/10 group-hover:text-white transition-colors" />
+                               </div>
                             </div>
                           </div>
                         )}

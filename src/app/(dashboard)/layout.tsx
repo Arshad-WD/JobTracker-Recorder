@@ -19,14 +19,14 @@ export default function DashboardLayout({
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <Sidebar />
       <Header />
       <motion.main
         initial={false}
         animate={{ paddingLeft: isMobile ? 0 : (sidebarOpen ? 256 : 72) }}
-        transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="pt-24 md:pt-16 min-h-screen"
+        transition={{ duration: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="pt-24 md:pt-16 min-h-screen relative z-10"
       >
         <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto">
           {children}
@@ -35,6 +35,6 @@ export default function DashboardLayout({
       <CommandPalette />
       <QuickAddModal />
       <QuickSearchMode />
-    </div>
+    </>
   );
 }
