@@ -7,7 +7,7 @@ export default async function DashboardPage() {
   let analytics;
   try {
     analytics = await getAnalytics();
-  } catch (e) {
+  } catch (_e) {
     analytics = null;
   }
 

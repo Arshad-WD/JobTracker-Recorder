@@ -11,7 +11,6 @@ import {
   Trash2,
   MapPin,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -22,12 +21,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   cn,
-  getStatusColor,
   getStatusLabel,
   getPlatformLabel,
   getJobTypeLabel,
   formatDate,
-  formatCurrency,
   calculateApplicationScore,
 } from "@/lib/utils";
 import { deleteApplication, archiveApplication } from "@/server/actions";

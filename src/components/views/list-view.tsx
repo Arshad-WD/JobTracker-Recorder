@@ -6,17 +6,11 @@ import {
   MapPin,
   Calendar,
   User,
-  Phone,
-  Mail,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import {
   cn,
-  getStatusColor,
   getStatusLabel,
-  getPriorityColor,
   getPlatformLabel,
-  getJobTypeLabel,
   formatDate,
   formatCurrency,
   calculateApplicationScore,

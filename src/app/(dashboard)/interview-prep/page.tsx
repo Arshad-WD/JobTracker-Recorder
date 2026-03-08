@@ -4,26 +4,18 @@ import React, { useEffect, useState, useTransition, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
-  Loader2,
-  Copy,
-  Check,
   Settings,
-  AlertCircle,
   Brain,
   Users,
   Cpu,
   Heart,
   ChevronDown,
-  RotateCcw,
   BookOpen,
-  Target,
   Lightbulb,
-  ArrowRight,
-  FileText,
   Upload,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
 import {
   Select,
   SelectContent,
@@ -146,12 +138,11 @@ export default function InterviewPrepPage() {
   const [content, setContent] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+
   const [expandedQ, setExpandedQ] = useState<number | null>(null);
   const [resumeText, setResumeText] = useState("");
-  const [resumeExpanded, setResumeExpanded] = useState(false);
-  const [resumeFileName, setResumeFileName] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+
+  const [_isPending, startTransition] = useTransition();
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -161,8 +152,6 @@ export default function InterviewPrepPage() {
       const reader = new FileReader();
       reader.onload = (ev) => {
         setResumeText(ev.target?.result as string);
-        setResumeFileName(file.name);
-        setResumeExpanded(true);
         toast.success("RESUME_LOADED");
       };
       reader.readAsText(file);
@@ -181,8 +170,6 @@ export default function InterviewPrepPage() {
 
         if (response.ok) {
           setResumeText(data.text);
-          setResumeFileName(file.name);
-          setResumeExpanded(true);
           toast.success("PDF_RESUME_PARSED");
         } else {
           toast.error(data.error || "FAILED_PARSE");
@@ -266,9 +253,7 @@ export default function InterviewPrepPage() {
     const text = content[key];
     if (!text) return;
     await navigator.clipboard.writeText(text);
-    setCopied(true);
     toast.success("DATA_COPIED");
-    setTimeout(() => setCopied(false), 2000);
   };
 
   return (

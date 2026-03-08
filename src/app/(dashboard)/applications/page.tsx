@@ -7,13 +7,10 @@ import {
   LayoutGrid,
   List,
   Table2,
-  Filter,
   X,
   Download,
-  Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -52,7 +49,7 @@ export default function ApplicationsPage() {
     clearFilters,
   } = useAppStore();
 
-  const [isPending, startTransition] = useTransition();
+  const [_isPending, startTransition] = useTransition();
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {

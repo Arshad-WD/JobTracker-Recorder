@@ -5,15 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Upload, 
   FileText, 
-  Search, 
   Cpu, 
   AlertCircle, 
   CheckCircle2, 
   Zap,
-  ArrowRight,
   ShieldAlert,
   Terminal,
-  BarChart3
 } from "lucide-react";
 import MonolithButton from "@/components/neon/MonolithButton";
 import MonolithCard from "@/components/neon/MonolithCard";
@@ -168,7 +165,7 @@ export default function ResumeMatcherPage() {
                 
                 <div className="mt-8">
                   <MonolithButton 
-                    variant="primary" 
+                    variant="violet" 
                     glitch 
                     className="w-full py-6"
                     onClick={startAnalysis}
@@ -322,7 +319,7 @@ export default function ResumeMatcherPage() {
                    
                    <div className="mt-8 flex gap-4">
                       <MonolithButton 
-                        variant="secondary" 
+                        variant="green" 
                         className="flex-1"
                         onClick={() => {
                           setResult(null);
@@ -333,7 +330,7 @@ export default function ResumeMatcherPage() {
                         RESET_ANALYZER
                       </MonolithButton>
                       <MonolithButton 
-                        variant="primary" 
+                        variant="violet" 
                         glitch 
                         className="flex-1"
                         onClick={() => window.print()}

@@ -6,20 +6,11 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import {
   Target,
-  Plus,
   Trash2,
   Flame,
   Trophy,
-  Loader2,
   Zap,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -331,7 +322,7 @@ export default function GoalsPage() {
                              <h3 className="text-2xl font-black uppercase tracking-tight text-white">{goal.title}</h3>
                           </div>
                           <p className="font-mono text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
-                             TYPE: {GOAL_TYPE_LABELS[goal.goalType] || goal.goalType} // ID: {goal.id.slice(0, 8)}
+                             TYPE: {GOAL_TYPE_LABELS[goal.goalType] || goal.goalType} {" // "} ID: {goal.id.slice(0, 8)}
                           </p>
                         </div>
                         <div className="flex items-center gap-4">

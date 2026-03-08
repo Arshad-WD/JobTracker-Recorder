@@ -4,28 +4,14 @@ import React, { memo } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
-  Briefcase,
-  TrendingUp,
-  Target,
-  Clock,
   ArrowUpRight,
   Plus,
-  Zap,
-  Sparkles,
-  Calendar,
   ArrowRight,
-  CheckCircle2,
-  AlertCircle,
   Ghost,
-  Cpu,
-  Settings,
-  BookOpen,
-  Lightbulb,
-  ChevronDown,
 } from "lucide-react";
 import MonolithCard from "@/components/neon/MonolithCard";
 import MonolithButton from "@/components/neon/MonolithButton";
-import { getStatusColor, getStatusLabel, cn } from "@/lib/utils";
+import { getStatusLabel, cn } from "@/lib/utils";
 import { useAppStore } from "@/hooks/use-store";
 import { generateInsights, type Insight } from "@/lib/insights";
 

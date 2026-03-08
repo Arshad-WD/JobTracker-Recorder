@@ -9,7 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   getStatusColor,
   getStatusLabel,
-  getPlatformLabel,
   formatDate,
 } from "@/lib/utils";
 import { getApplications, archiveApplication, deleteApplication } from "@/server/actions";
@@ -20,7 +19,7 @@ type AppWithInterviews = Application & { interviews: Interview[] };
 
 export default function ArchivedPage() {
   const [apps, setApps] = useState<AppWithInterviews[]>([]);
-  const [isPending, startTransition] = useTransition();
+  const [_isPending, startTransition] = useTransition();
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {

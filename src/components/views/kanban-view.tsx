@@ -7,7 +7,6 @@ import {
   Draggable,
   type DropResult,
 } from "@hello-pangea/dnd";
-import { Badge } from "@/components/ui/badge";
 import {
   getStatusLabel,
   getPlatformLabel,

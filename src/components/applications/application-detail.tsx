@@ -4,24 +4,9 @@ import React, { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
-  Briefcase,
-  MapPin,
-  Calendar,
-  ExternalLink,
-  User,
-  Phone,
-  Mail,
-  FileText,
-  Archive,
-  Trash2,
-  Loader2,
   Plus,
-  Clock,
-  Pencil,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -36,13 +21,14 @@ import {
 } from "@/components/ui/select";
 import {
   getStatusLabel,
-  getPriorityColor,
   getPlatformLabel,
   getJobTypeLabel,
   formatDate,
   formatCurrency,
   calculateApplicationScore,
+  cn,
 } from "@/lib/utils";
+import MonolithButton from "@/components/neon/MonolithButton";
 import {
   updateApplication,
   deleteApplication,
@@ -250,8 +236,8 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
               <div className="flex items-center justify-between">
                 <h3 className="text-xs font-black uppercase tracking-[0.4em] text-white/40">INTERVIEW_PROTOCOL</h3>
                 <MonolithButton
-                  variant="secondary"
-                  size="sm"
+                  variant="green"
+                  className="px-3 py-1.5 text-[10px]"
                   onClick={() => setShowInterviewForm(!showInterviewForm)}
                 >
                   ADD_PHASE
@@ -291,7 +277,7 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
                     <Label className="font-mono text-[8px] uppercase text-white/40">DIRECTIVE_NOTES</Label>
                     <Input name="notes" placeholder="SYSTEM_REMARKS..." className="bg-black border-white/20 rounded-none h-10 font-mono text-xs uppercase" />
                   </div>
-                  <MonolithButton type="submit" variant="primary" glitch className="w-full">
+                  <MonolithButton type="submit" variant="violet" glitch className="w-full">
                     COMMIT_PHASE
                   </MonolithButton>
                 </motion.form>
@@ -347,16 +333,16 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
 
             {/* Destruction / System Commands */}
             <div className="pt-8 border-t-[3px] border-white/10 grid grid-cols-2 gap-4">
-              <MonolithButton variant="secondary" onClick={() => setShowEditModal(true)}>
+              <MonolithButton variant="green" onClick={() => setShowEditModal(true)}>
                 CONFIG_EDIT
               </MonolithButton>
-              <MonolithButton variant="secondary" className="border-violet-500/50 text-violet-400" onClick={() => setShowAIModal(true)}>
+              <MonolithButton variant="green" className="border-violet-500/50 text-violet-400" onClick={() => setShowAIModal(true)}>
                 AI_ANALYZE
               </MonolithButton>
-              <MonolithButton variant="secondary" onClick={handleArchive}>
+              <MonolithButton variant="green" onClick={handleArchive}>
                 ARCHIVE_DATA
               </MonolithButton>
-              <MonolithButton variant="secondary" className="border-[#EF4444]/50 text-[#EF4444]" onClick={handleDelete}>
+              <MonolithButton variant="green" className="border-[#EF4444]/50 text-[#EF4444]" onClick={handleDelete}>
                 PURGE_ENTRY
               </MonolithButton>
             </div>
@@ -387,26 +373,6 @@ function TechnicalStat({ label, value }: { label: string; value?: string | null 
       <p className="text-[10px] font-black uppercase tracking-widest text-white truncate border-b border-white/10 pb-1">
         {value || "NULL_VALUE"}
       </p>
-    </div>
-  );
-}
-
-function DetailItem({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon?: React.ComponentType<{ className?: string }>;
-  label: string;
-  value?: string | null;
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground" />}
-      <div>
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="font-medium">{value || "-"}</p>
-      </div>
     </div>
   );
 }
