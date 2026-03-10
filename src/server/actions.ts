@@ -405,7 +405,29 @@ export async function getUserSettings() {
         aiProvider: u.aiProvider ?? null,
         aiApiKey: u.aiApiKey ?? null,
         aiModel: u.aiModel ?? null,
+        apiKey: u.apiKey ?? null,
     };
+}
+
+export async function generateExtensionApiKey() {
+    const session = await getSession();
+    const apiKey = crypto.randomUUID();
+    await prisma.user.update({
+        where: { id: session.user.id },
+        data: { apiKey } as any,
+    });
+    revalidatePath("/settings");
+    return { success: true, apiKey };
+}
+
+export async function deleteExtensionApiKey() {
+    const session = await getSession();
+    await prisma.user.update({
+        where: { id: session.user.id },
+        data: { apiKey: null } as any,
+    });
+    revalidatePath("/settings");
+    return { success: true };
 }
 
 export async function updateUserSettings(data: {
@@ -418,6 +440,7 @@ export async function updateUserSettings(data: {
     aiProvider?: string | null;
     aiApiKey?: string | null;
     aiModel?: string | null;
+    apiKey?: string | null;
 }) {
     const session = await getSession();
 

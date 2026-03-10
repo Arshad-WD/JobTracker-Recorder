@@ -42,6 +42,7 @@ import {
   PROVIDER_MODELS,
   type AIProviderType,
 } from "@/lib/ai-provider";
+import { ExtensionSettings } from "@/components/dashboard/ExtensionSettings";
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<{
@@ -51,6 +52,7 @@ export default function SettingsPage() {
     smsReminders: boolean;
     reminderDays: number;
     reminderTime: string;
+    apiKey: string | null;
   } | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -76,6 +78,7 @@ export default function SettingsPage() {
             smsReminders: data.smsReminders,
             reminderDays: data.reminderDays,
             reminderTime: data.reminderTime,
+            apiKey: data.apiKey,
           });
           if (data.aiProvider) setAiProvider(data.aiProvider);
           if (data.aiApiKey) setAiApiKey(data.aiApiKey);
@@ -321,6 +324,9 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
       </motion.div>
+
+      {/* Extension Settings */}
+      <ExtensionSettings initialApiKey={settings.apiKey} />
 
       {/* Reminder Settings */}
       <motion.div
