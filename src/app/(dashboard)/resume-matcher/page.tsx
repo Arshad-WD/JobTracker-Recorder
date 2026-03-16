@@ -60,27 +60,28 @@ export default function ResumeMatcherPage() {
   return (
     <div className="space-y-8 pb-20">
       {/* Hero Header */}
-      <div className="relative p-8 bg-black border-[3px] border-white overflow-hidden">
-        <div className="monolith-scanlines" />
+      <div className="relative p-8 md:p-12 border border-hologram-border bg-hologram-glass backdrop-blur-xl rounded-2xl overflow-hidden">
+        <div className="absolute -top-24 -left-24 h-64 w-64 bg-hologram-indigo/10 blur-[100px]" />
+        <div className="absolute -bottom-24 -right-24 h-64 w-64 bg-hologram-cyan/10 blur-[100px]" />
+        
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="h-2 w-2 bg-[#22C55E] animate-pulse" />
-              <span className="font-mono text-[10px] text-[#8B5CF6] uppercase tracking-[0.3em]">
-                NEURAL_MATCH_v1.0
+            <div className="flex items-center gap-2 mb-3">
+              <span className="h-2 w-2 bg-hologram-cyan animate-pulse rounded-full shadow-[0_0_8px_#06b6d4]" />
+              <span className="font-mono text-[9px] font-bold text-hologram-indigo uppercase tracking-[0.3em]">
+                NEURAL_MATCH_v2.0
               </span>
             </div>
-            <h1 className="text-5xl font-black uppercase tracking-tighter text-white">
-              RESUME_MATCHER
+            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white hologram-heading">
+              Resume_Matcher
             </h1>
-            <p className="text-white/40 font-mono text-xs mt-2 uppercase tracking-widest">
-              AI_POWERED_SYSTEM_ANALYSIS // COMPUTE_MATCH_PERCENTAGE
+            <p className="font-mono text-[10px] text-white/50 mt-3 uppercase tracking-widest leading-relaxed max-w-xl">
+              SYNTHESIZING_VECTORS // CROSS_REFERENCING_TARGET_COMPETENCIES
             </p>
           </div>
-          <div className="hidden md:flex flex-col items-end gap-1 font-mono text-[8px] text-white/20 uppercase">
-            <span>Core_Stability: 99.8%</span>
-            <span>Uptime: 432:12:08</span>
-            <span>Thread_Count: 128</span>
+          <div className="hidden md:flex flex-col items-end gap-1 font-mono text-[8px] text-hologram-cyan/30 uppercase">
+             <span>Compute_Load: NOMINAL</span>
+             <span>Ref_Source: JOB_DATA_V04</span>
           </div>
         </div>
       </div>
@@ -104,10 +105,11 @@ export default function ResumeMatcherPage() {
                 <div 
                   onClick={() => fileInputRef.current?.click()}
                   className={cn(
-                    "border-2 border-dashed border-white/10 p-12 text-center cursor-pointer transition-colors group",
-                    file ? "border-[#22C55E]/50 bg-[#22C55E]/5" : "hover:border-white/30 hover:bg-white/5"
+                    "border border-dashed border-hologram-border p-12 text-center cursor-pointer transition-all group rounded-xl relative overflow-hidden",
+                    file ? "bg-hologram-cyan/5 border-hologram-cyan/50 shadow-[0_0_20px_rgba(6,182,212,0.1)]" : "hover:border-hologram-indigo/50 hover:bg-hologram-indigo/5"
                   )}
                 >
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <input 
                     type="file" 
                     ref={fileInputRef} 
@@ -159,8 +161,8 @@ export default function ResumeMatcherPage() {
                 <textarea
                   value={jobDescription}
                   onChange={(e) => setJobDescription(e.target.value)}
-                  placeholder="PASTE_JOB_DESCRIPTION_OR_LINK_SPECIFICATIONS_HERE..."
-                  className="w-full h-64 bg-black border-2 border-white/10 p-4 font-mono text-xs text-white outline-none focus:border-[#8B5CF6] focus:bg-[#8B5CF6]/5 transition-all placeholder:text-white/10 resize-none underline-offset-8"
+                  placeholder="PASTE_TARGET_SPECIFICATIONS_HERE..."
+                  className="w-full h-64 bg-white/5 border border-hologram-border p-6 font-mono text-[11px] text-white/80 outline-none focus:border-hologram-indigo focus:bg-hologram-indigo/5 transition-all rounded-xl placeholder:text-white/10 resize-none"
                 />
                 
                 <div className="mt-8">
@@ -185,19 +187,17 @@ export default function ResumeMatcherPage() {
             className="flex flex-col items-center justify-center py-40 space-y-12"
           >
             <div className="relative">
-              <div className="w-32 h-32 border-[4px] border-white/10 relative">
+              <div className="w-32 h-32 border border-hologram-border relative rounded-2xl overflow-hidden bg-hologram-glass shadow-[0_0_50px_rgba(79,70,229,0.2)]">
                 <motion.div 
                   initial={{ top: "0%" }}
                   animate={{ top: "100%" }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="absolute left-0 right-0 h-1 bg-[#22C55E] shadow-[0_0_15px_#22C55E] z-10"
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                  className="absolute left-0 right-0 h-0.5 bg-hologram-cyan shadow-[0_0_15px_#06b6d4] z-10"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <Cpu className="h-12 w-12 text-[#8B5CF6] animate-pulse" />
+                  <Cpu className="h-12 w-12 text-hologram-indigo animate-pulse" />
                 </div>
               </div>
-              <div className="absolute -top-4 -left-4 w-4 h-4 border-t-4 border-l-4 border-[#8B5CF6]" />
-              <div className="absolute -bottom-4 -right-4 w-4 h-4 border-b-4 border-r-4 border-[#8B5CF6]" />
             </div>
 
             <div className="text-center space-y-4">
@@ -250,16 +250,16 @@ export default function ResumeMatcherPage() {
                     <span className="font-mono text-[10px] text-white/40 uppercase tracking-widest mb-2">
                        MATCH_PERCENTAGE
                     </span>
-                    <div className="text-8xl font-black text-[#22C55E] tracking-tighter mb-4">
+                    <div className="text-8xl font-black text-hologram-cyan tracking-tighter mb-4 hologram-heading">
                       {result.score}%
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1.5">
                        {Array.from({length: 10}).map((_, i) => (
                          <div 
                            key={i} 
                            className={cn(
-                             "w-2 h-6 border",
-                             i < result.score / 10 ? "bg-[#22C55E] border-[#22C55E]" : "bg-transparent border-white/10"
+                             "w-1.5 h-6 rounded-full transition-all duration-1000",
+                             i < result.score / 10 ? "bg-hologram-cyan shadow-[0_0_10px_#06b6d4]" : "bg-white/5 border border-white/10"
                            )} 
                          />
                        ))}

@@ -69,7 +69,6 @@ export async function createApplication(data: unknown) {
         data: {
             ...validated,
             userId: session.user.id,
-            recruiterEmail: validated.recruiterEmail || null,
             jobLink: validated.jobLink || null,
         },
         include: { interviews: true },
@@ -96,7 +95,6 @@ export async function updateApplication(data: unknown) {
         data: {
             ...updateData,
             lastActivityAt: new Date(),
-            recruiterEmail: updateData.recruiterEmail || null,
             jobLink: updateData.jobLink || null,
         },
         include: { interviews: true },
@@ -172,7 +170,6 @@ export async function searchApplications(query: string) {
                 { companyName: { contains: query, mode: "insensitive" } },
                 { positionTitle: { contains: query, mode: "insensitive" } },
                 { recruiterName: { contains: query, mode: "insensitive" } },
-                { recruiterEmail: { contains: query, mode: "insensitive" } },
                 { recruiterPhone: { contains: query, mode: "insensitive" } },
                 { location: { contains: query, mode: "insensitive" } },
                 { notes: { contains: query, mode: "insensitive" } },
@@ -397,7 +394,6 @@ export async function getUserSettings() {
     const u = user as any;
     return {
         reminderEnabled: user.reminderEnabled,
-        emailReminders: user.emailReminders,
         desktopNotifications: user.desktopNotifications,
         smsReminders: user.smsReminders,
         reminderDays: user.reminderDays,
@@ -432,7 +428,6 @@ export async function deleteExtensionApiKey() {
 
 export async function updateUserSettings(data: {
     reminderEnabled?: boolean;
-    emailReminders?: boolean;
     desktopNotifications?: boolean;
     smsReminders?: boolean;
     reminderDays?: number;
@@ -468,7 +463,6 @@ export async function importApplications(apps: unknown[]) {
                 data: {
                     ...validated,
                     userId: session.user.id,
-                    recruiterEmail: validated.recruiterEmail || null,
                     jobLink: validated.jobLink || null,
                 },
             });

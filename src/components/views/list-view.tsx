@@ -37,17 +37,17 @@ export function ListView({ applications, onSelect }: ListViewProps) {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * 0.05 }}
-          className="group relative border-[3px] border-white bg-black p-6 hover:translate-x-1 hover:-translate-y-1 transition-all cursor-pointer overflow-hidden"
+          className="group relative border border-hologram-border bg-hologram-glass/40 backdrop-blur-xl p-6 hover:border-hologram-indigo transition-all cursor-pointer rounded-2xl overflow-hidden"
           onClick={() => onSelect(app.id)}
-          style={{ boxShadow: "8px 8px 0px rgba(139, 92, 246, 0.3)" }}
+          style={{ boxShadow: "0 0 30px -10px rgba(79, 70, 229, 0.2)" }}
         >
-          <div className="monolith-scanlines rounded-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-1000" />
           
           <div className="relative z-10 flex flex-col md:flex-row gap-6">
             {/* Company Avatar / Unit ID */}
             <div className="flex-shrink-0">
-               <div className="h-20 w-20 border-[3px] border-white bg-white flex items-center justify-center text-black">
-                  <span className="text-4xl font-black uppercase">{app.companyName.charAt(0)}</span>
+               <div className="h-16 w-16 border border-hologram-border bg-hologram-indigo/10 flex items-center justify-center text-white rounded-xl shadow-[0_0_15px_rgba(79,70,229,0.2)]">
+                  <span className="text-3xl font-black uppercase text-hologram-cyan">{app.companyName.charAt(0)}</span>
                </div>
                <div className="mt-2 text-center text-[8px] font-mono font-black text-white/40 uppercase tracking-[0.2em]">
                   NODE_ID_{app.id.slice(-4)}
@@ -58,7 +58,7 @@ export function ListView({ applications, onSelect }: ListViewProps) {
             <div className="flex-1 min-w-0 space-y-4">
               <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-2xl font-black uppercase tracking-tighter text-white group-hover:text-[#8B5CF6] transition-colors leading-none">
+                  <h3 className="text-2xl font-black uppercase tracking-tight text-white group-hover:text-hologram-cyan transition-colors leading-none hologram-heading">
                     {app.companyName}
                   </h3>
                   <p className="text-[10px] font-mono font-black uppercase tracking-widest text-white/40 mt-1">
@@ -67,21 +67,21 @@ export function ListView({ applications, onSelect }: ListViewProps) {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={cn(
-                    "px-4 py-1.5 border-[2px] font-black text-[10px] uppercase tracking-widest bg-black",
-                    app.status === "OFFER" ? "border-[#22C55E] text-[#22C55E]" : 
-                    app.status === "REJECTED" ? "border-[#EF4444] text-[#EF4444]" : 
-                    "border-white text-white"
+                    "px-4 py-1.5 border font-bold text-[10px] uppercase tracking-widest bg-white/5 rounded-lg",
+                    app.status === "OFFER" ? "border-green-500/50 text-green-400 shadow-[0_0_10px_rgba(34,197,94,0.1)]" : 
+                    app.status === "REJECTED" ? "border-red-500/50 text-red-400 shadow-[0_0_10px_rgba(239,68,68,0.1)]" : 
+                    "border-hologram-border text-white/60"
                   )}>
                     {getStatusLabel(app.status)}
                   </span>
-                  <div className="px-3 py-1.5 border-[2px] border-[#8B5CF6] text-[#8B5CF6] bg-[#8B5CF6]/5 font-black text-[10px] uppercase tracking-widest">
-                    P_{app.priority}
+                  <div className="px-3 py-1.5 border border-hologram-indigo/50 text-hologram-indigo bg-hologram-indigo/5 font-bold text-[10px] uppercase tracking-widest rounded-lg">
+                    {app.priority}
                   </div>
                 </div>
               </div>
 
               {/* Technical Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-y border-white/10">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4 border-y border-hologram-border/50">
                 <TechnicalStat label="LOCATION_REF" value={app.location} />
                 <TechnicalStat label="DEPLOY_DATE" value={formatDate(app.appliedDate)} />
                 <TechnicalStat label="UPSTREAM_SRC" value={getPlatformLabel(app.platform)} />
@@ -129,8 +129,8 @@ export function ListView({ applications, onSelect }: ListViewProps) {
 function TechnicalStat({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="space-y-1">
-      <p className="font-mono text-[8px] text-white/20 uppercase tracking-[0.3em]">{label}</p>
-      <p className="text-[10px] font-black uppercase tracking-widest text-white truncate">
+      <p className="font-mono text-[8px] text-hologram-cyan/30 uppercase tracking-[0.3em]">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-widest text-white/80 truncate">
         {value || "N/A"}
       </p>
     </div>

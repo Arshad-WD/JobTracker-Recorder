@@ -518,10 +518,6 @@ export function QuickAddModal() {
                                 <Input placeholder="John Doe" {...register("recruiterName")} className="h-9" />
                               </div>
                               <div className="space-y-1.5">
-                                <Label className="text-xs">Email</Label>
-                                <Input placeholder="john@co.com" {...register("recruiterEmail")} className="h-9" />
-                              </div>
-                              <div className="space-y-1.5">
                                 <Label className="text-xs">Phone</Label>
                                 <Input placeholder="+1..." {...register("recruiterPhone")} className="h-9" />
                               </div>

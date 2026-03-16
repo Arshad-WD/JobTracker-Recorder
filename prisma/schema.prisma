@@ -54,7 +54,6 @@ model User {
 
   // Preferences
   reminderEnabled     Boolean @default(true)
-  emailReminders      Boolean @default(true)
   desktopNotifications Boolean @default(false)
   smsReminders        Boolean @default(false)
   reminderDays        Int     @default(30)
@@ -95,7 +94,6 @@ model Application {
   appliedDate     DateTime @default(now())
   followUpDate    DateTime?
   recruiterName   String?
-  recruiterEmail  String?
   recruiterPhone  String?
   jobLink         String?
   resumeVersion   String?

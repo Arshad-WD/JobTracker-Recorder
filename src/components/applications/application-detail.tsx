@@ -145,41 +145,42 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "spring", damping: 30, stiffness: 300 }}
-        className="fixed right-0 top-0 z-[70] h-full w-full max-w-xl border-l-[3px] border-white bg-black shadow-2xl relative overflow-hidden"
+        className="fixed right-0 top-0 z-[70] h-full w-full max-w-xl border-l border-hologram-border bg-hologram-glass/95 backdrop-blur-2xl shadow-[0_0_100px_rgba(0,0,0,0.5)] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="monolith-scanlines rounded-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-hologram-cyan/5 via-transparent to-hologram-indigo/5 pointer-events-none" />
         <ScrollArea viewportRef={scrollRef} className="h-full relative z-10">
           <div className="p-8 space-y-8">
             {/* Header */}
-            <div className="flex items-start justify-between bg-white p-6 -mx-8 -mt-8 border-b-[3px] border-black">
-              <div className="flex items-center gap-4">
-                <div className="h-16 w-16 border-[3px] border-black bg-black flex items-center justify-center text-white text-3xl font-black">
+            <div className="flex items-start justify-between bg-white/5 p-8 -mx-8 -mt-8 border-b border-hologram-border backdrop-blur-md relative z-20">
+              <div className="flex items-center gap-6">
+                <div className="h-16 w-16 border border-hologram-cyan/50 bg-hologram-cyan/10 flex items-center justify-center text-hologram-cyan text-3xl font-black rounded-2xl shadow-[0_0_20px_rgba(6,182,212,0.2)]">
                   {application.companyName.charAt(0)}
                 </div>
                 <div>
-                  <h2 className="text-3xl font-black uppercase tracking-tighter text-black leading-none mb-1">
+                  <h2 className="text-3xl font-black uppercase tracking-tight text-white leading-none mb-2 hologram-heading">
                     {application.companyName}
                   </h2>
-                  <p className="text-[10px] font-mono font-black uppercase tracking-widest text-black/40">
+                  <p className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-hologram-cyan/60">
                     TARGET_ENTRY // {application.positionTitle}
                   </p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" onClick={onClose} className="hover:bg-black/5 rounded-none">
-                <X className="h-6 w-6 text-black" />
+              <Button variant="ghost" size="icon" onClick={onClose} className="hover:bg-white/10 rounded-xl text-white/40 hover:text-white">
+                <X className="h-6 w-6" />
               </Button>
             </div>
 
             {/* Status & Technical Meta */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div className="p-4 border-[2px] border-white/10 bg-white/5 space-y-2">
-                  <span className="font-mono text-[8px] text-white/20 uppercase tracking-[0.3em]">NODE_STATUS</span>
+               <div className="p-4 border border-hologram-border bg-white/5 space-y-3 rounded-2xl relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-hologram-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="font-mono text-[8px] text-hologram-cyan uppercase tracking-[0.3em] font-bold relative z-10">NODE_STATUS</span>
                   <Select value={application.status} onValueChange={handleStatusChange}>
-                    <SelectTrigger className="w-full h-10 border-white/20 bg-transparent rounded-none font-black uppercase tracking-widest text-[10px]">
+                    <SelectTrigger className="w-full h-10 border-hologram-border/50 bg-transparent rounded-xl font-bold uppercase tracking-widest text-[10px] relative z-10">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-black border-[2px] border-white rounded-none">
+                    <SelectContent className="bg-hologram-glass backdrop-blur-xl border border-hologram-border rounded-xl">
                       <SelectItem value="APPLIED">APPLIED</SelectItem>
                       <SelectItem value="SCREENING">SCREENING</SelectItem>
                       <SelectItem value="INTERVIEW">INTERVIEW</SelectItem>
@@ -191,25 +192,27 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
                   </Select>
                </div>
                
-               <div className="p-4 border-[2px] border-white/10 bg-white/5 space-y-2">
-                  <span className="font-mono text-[8px] text-white/20 uppercase tracking-[0.3em]">PRIORITY_VECTOR</span>
-                  <div className="flex h-10 items-center justify-center border-white/20 border-2 font-black uppercase tracking-widest text-[10px] bg-white/5">
+               <div className="p-4 border border-hologram-border bg-white/5 space-y-3 rounded-2xl relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-br from-hologram-indigo/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <span className="font-mono text-[8px] text-hologram-indigo uppercase tracking-[0.3em] font-bold relative z-10">PRIORITY_VECTOR</span>
+                  <div className="flex h-10 items-center justify-center border-hologram-border/50 border rounded-xl font-bold uppercase tracking-widest text-[10px] bg-white/5 relative z-10 text-white">
                      {application.priority}
                   </div>
                </div>
             </div>
 
             {/* System Score Readout */}
-            <div className="p-6 border-[3px] border-[#8B5CF6] bg-[#8B5CF6]/5 space-y-4">
-               <div className="flex justify-between items-end">
-                  <h4 className="text-xs font-black uppercase tracking-[0.4em] text-[#8B5CF6]">COMPUTED_MATCH_INDEX</h4>
-                  <span className="text-4xl font-black text-[#8B5CF6] tracking-tighter">{score}%</span>
+            <div className="p-8 border border-hologram-indigo/50 bg-hologram-indigo/10 rounded-2xl space-y-6 relative overflow-hidden group">
+               <div className="absolute inset-0 bg-gradient-to-br from-hologram-indigo/20 to-transparent opacity-40" />
+               <div className="flex justify-between items-end relative z-10">
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-hologram-indigo">COMPUTED_MATCH_INDEX</h4>
+                  <span className="text-4xl font-black text-white tracking-tighter hologram-heading">{score}%</span>
                </div>
-               <div className="h-4 w-full border border-[#8B5CF6]/30 bg-black p-0.5">
+               <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden relative z-10">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${score}%` }}
-                    className="h-full bg-[#8B5CF6] shadow-[0_0_10px_#8B5CF6]"
+                    className="h-full bg-gradient-to-r from-hologram-indigo to-hologram-cyan shadow-[0_0_20px_#818cf8]"
                   />
                </div>
             </div>
@@ -374,9 +377,9 @@ export function ApplicationDetail({ application, onClose }: ApplicationDetailPro
 
 function TechnicalStat({ label, value }: { label: string; value?: string | null }) {
   return (
-    <div className="space-y-1">
-      <p className="font-mono text-[8px] text-white/20 uppercase tracking-[0.3em]">{label}</p>
-      <p className="text-[10px] font-black uppercase tracking-widest text-white truncate border-b border-white/10 pb-1">
+    <div className="space-y-1 group/stat">
+      <p className="font-mono text-[8px] text-hologram-cyan/30 uppercase tracking-[0.3em] font-bold group-hover/stat:text-hologram-cyan/60 transition-colors">{label}</p>
+      <p className="text-[11px] font-bold uppercase tracking-widest text-white/80 transition-colors group-hover/stat:text-white truncate border-b border-hologram-border pb-1.5">
         {value || "NULL_VALUE"}
       </p>
     </div>

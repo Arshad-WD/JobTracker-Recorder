@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { TableView } from "@/components/views/table-view";
 import { KanbanView } from "@/components/views/kanban-view";
 import { ListView } from "@/components/views/list-view";
@@ -120,10 +121,10 @@ export default function ApplicationsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Applications</h1>
-          <p className="text-muted-foreground mt-1">
-            {filtered.length} application{filtered.length !== 1 ? "s" : ""}
-            {hasFilters ? " (filtered)" : ""}
+          <h1 className="text-3xl font-black uppercase tracking-tighter hologram-heading">Applications</h1>
+          <p className="font-mono text-[10px] text-white/40 uppercase tracking-[0.2em] mt-2">
+            <span className="text-hologram-cyan">{filtered.length}</span>_TARGETS_ACQUIRED
+            {hasFilters ? " // FILTERED_MODE" : ""}
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
@@ -208,27 +209,36 @@ export default function ApplicationsPage() {
         </div>
 
         {/* View switcher */}
-        <div className="flex items-center border rounded-lg p-0.5 bg-muted/50">
+        <div className="flex items-center border border-hologram-border rounded-xl p-1 bg-white/5 backdrop-blur-md">
           <Button
-            variant={viewMode === "table" ? "secondary" : "ghost"}
+            variant="ghost"
             size="sm"
-            className="h-8 px-3"
+            className={cn(
+              "h-8 px-3 rounded-lg transition-all",
+              viewMode === "table" ? "bg-hologram-cyan/20 text-hologram-cyan shadow-[0_0_10px_rgba(6,182,212,0.2)]" : "text-white/40 hover:text-white"
+            )}
             onClick={() => setViewMode("table")}
           >
             <Table2 className="h-4 w-4" />
           </Button>
           <Button
-            variant={viewMode === "kanban" ? "secondary" : "ghost"}
+            variant="ghost"
             size="sm"
-            className="h-8 px-3"
+            className={cn(
+              "h-8 px-3 rounded-lg transition-all",
+              viewMode === "kanban" ? "bg-hologram-cyan/20 text-hologram-cyan shadow-[0_0_10px_rgba(6,182,212,0.2)]" : "text-white/40 hover:text-white"
+            )}
             onClick={() => setViewMode("kanban")}
           >
             <LayoutGrid className="h-4 w-4" />
           </Button>
           <Button
-            variant={viewMode === "list" ? "secondary" : "ghost"}
+            variant="ghost"
             size="sm"
-            className="h-8 px-3"
+            className={cn(
+              "h-8 px-3 rounded-lg transition-all",
+              viewMode === "list" ? "bg-hologram-cyan/20 text-hologram-cyan shadow-[0_0_10px_rgba(6,182,212,0.2)]" : "text-white/40 hover:text-white"
+            )}
             onClick={() => setViewMode("list")}
           >
             <List className="h-4 w-4" />

@@ -46,7 +46,7 @@ export function Header() {
       initial={false}
       animate={{ paddingLeft: isMobile ? 0 : (sidebarOpen ? 256 : 72) }}
       transition={{ duration: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="fixed top-0 right-0 left-0 z-30 h-16 border-b-[3px] border-white bg-black/95"
+      className="fixed top-0 right-0 left-0 z-30 h-16 border-b border-hologram-border bg-hologram-glass backdrop-blur-xl"
     >
       <div className="flex items-center justify-between h-16 px-4 md:px-6">
         {/* Left: Menu + Search */}
@@ -68,16 +68,10 @@ export function Header() {
                 placeholder="Search Archive..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 h-10 bg-black border-[2px] border-white/20 text-white font-mono text-xs focus:outline-none focus:border-[#8B5CF6] transition-all"
+                className="w-full pl-10 h-10 bg-hologram-glass border border-hologram-border text-white font-mono text-xs focus:outline-none focus:border-hologram-cyan transition-all rounded-lg"
               />
             </div>
-            <button
-              className="px-3 h-10 border-[2px] border-white/20 text-white/40 hover:text-white hover:border-white transition-all font-mono text-[10px] flex items-center gap-2"
-              onClick={() => setCommandOpen(true)}
-            >
-              <Command className="h-3 w-3" />
-              <span>TERMINAL [K]</span>
-            </button>
+              className="px-3 h-10 border border-hologram-border text-white/40 hover:text-white hover:border-hologram-indigo transition-all font-mono text-[10px] flex items-center gap-2 rounded-lg"
           </div>
         </div>
 
@@ -87,28 +81,28 @@ export function Header() {
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="h-10 w-10 border-[2px] border-white/20 flex items-center justify-center hover:border-[#8B5CF6] transition-all"
+              className="h-10 w-10 border border-hologram-border flex items-center justify-center hover:border-hologram-cyan transition-all rounded-lg bg-hologram-glass"
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
           )}
 
           {/* Notifications */}
-          <button className="h-10 w-10 border-[2px] border-white/20 flex items-center justify-center hover:border-[#22C55E] relative transition-all">
-            <Bell className="h-4 w-4 text-white" />
+          <button className="h-10 w-10 border border-hologram-border flex items-center justify-center hover:border-hologram-cyan relative transition-all rounded-lg bg-hologram-glass group">
+            <Bell className="h-4 w-4 text-white group-hover:text-hologram-cyan transition-colors" />
             {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 h-3 w-3 bg-[#22C55E] pulseShadow" />
+              <span className="absolute top-2 right-2 h-2 w-2 bg-hologram-cyan rounded-full shadow-[0_0_10px_#06B6D4]" />
             )}
           </button>
 
           {/* User menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="h-10 px-4 border-[2px] border-white text-white font-black uppercase text-[10px] tracking-widest hover:bg-white hover:text-black transition-all">
+              <button className="h-10 px-4 border border-hologram-border text-white font-bold uppercase text-[10px] tracking-widest hover:bg-white/10 hover:border-hologram-indigo transition-all rounded-lg glass">
                 {session?.user?.name?.split(' ')[0] || "SUBJECT"}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-black border-[3px] border-white rounded-none p-2" align="end" forceMount>
+            <DropdownMenuContent className="w-56 bg-hologram-space/90 backdrop-blur-2xl border border-hologram-border rounded-xl p-2" align="end" forceMount>
               <DropdownMenuLabel className="font-mono text-[10px] uppercase text-white/40">
                 Identity_Locked
               </DropdownMenuLabel>

@@ -1,17 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
-    --monolith-black: #000000;
-    --monolith-white: #ffffff;
-    --monolith-violet: #8B5CF6;
-    --monolith-green: #22C55E;
-    --monolith-border: 3px;
+    --hologram-space: #030305;
+    --hologram-indigo: #4F46E5;
+    --hologram-cyan: #06B6D4;
+    --hologram-border: rgba(255, 255, 255, 0.12);
+    --hologram-glass: rgba(255, 255, 255, 0.05);
+    --hologram-violet: #8B5CF6;
     --monolith-font-heading: 'Inter Tight', sans-serif;
     --monolith-font-mono: 'JetBrains Mono', monospace;
 }
 
 .monolith-container {
-    background-color: var(--monolith-black);
+    background-color: var(--hologram-space);
+    background-image: 
+        radial-gradient(circle at 0% 0%, rgba(79, 70, 229, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.15) 0%, transparent 50%);
     color: var(--monolith-white);
     font-family: var(--monolith-font-mono);
     min-height: 100vh;
@@ -112,17 +116,65 @@
     animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
 }
 
+.hologram-card {
+    background: var(--hologram-glass);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--hologram-border);
+    transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.hologram-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.hologram-card:hover::before {
+    transform: translateX(100%);
+}
+
+.hologram-card:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow:
+        0 0 30px -10px var(--hologram-indigo),
+        inset 0 0 10px rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.hologram-heading {
+    font-family: var(--monolith-font-heading);
+    background: linear-gradient(to bottom, #fff 30%, rgba(255, 255, 255, 0.5));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.05em;
+    font-weight: 900;
+}
+
+.hologram-mono {
+    font-family: var(--monolith-font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 10px;
+    font-weight: 700;
+}
+
 /* Heavy Blocks */
 .monolith-block {
-    border: var(--monolith-border) solid var(--monolith-white);
+    border: 1px solid var(--hologram-white); /* Changed from --monolith-border and --monolith-white */
     padding: 1.5rem;
-    background: var(--monolith-black);
+    background: var(--hologram-black); /* Changed from --monolith-black */
     transition: all 0.1s ease;
 }
 
 .monolith-block:hover {
     transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0px var(--monolith-violet);
+    box-shadow: 6px 6px 0px var(--hologram-violet); /* Changed from --monolith-violet */
 }
 
 @keyframes pulseShadow {

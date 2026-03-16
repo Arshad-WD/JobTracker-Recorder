@@ -15,9 +15,10 @@ import {
   AlertCircle,
   Settings,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import type { Application } from "@prisma/client";
+import MonolithButton from "@/components/neon/MonolithButton";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 interface AIAssistantModalProps {
   application: Application;
@@ -25,7 +26,7 @@ interface AIAssistantModalProps {
   onClose: () => void;
 }
 
-type TabType = "cover_letter" | "resume_tips" | "interview_tips" | "follow_up_email";
+type TabType = "cover_letter" | "resume_tips" | "interview_tips";
 
 const TABS: { id: TabType; label: string; icon: React.ElementType; description: string }[] = [
   {
@@ -45,12 +46,6 @@ const TABS: { id: TabType; label: string; icon: React.ElementType; description: 
     label: "Interview Tips",
     icon: MessageSquare,
     description: "Prepare for your interview",
-  },
-  {
-    id: "follow_up_email",
-    label: "Follow-Up",
-    icon: Mail,
-    description: "Draft a professional follow-up",
   },
 ];
 
@@ -129,165 +124,153 @@ export function AIAssistantModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="w-full max-w-3xl max-h-[85vh] overflow-hidden bg-card border border-border rounded-2xl shadow-2xl flex flex-col"
+          className="w-full max-w-3xl max-h-[85vh] overflow-hidden bg-hologram-glass/40 backdrop-blur-xl border border-hologram-border rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col relative"
           onClick={(e) => e.stopPropagation()}
         >
+          {/* Glass shine effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-hologram-cyan/5 pointer-events-none rounded-[2rem]" />
+          
           {/* Header */}
-          <div className="border-b border-border px-6 py-4 flex items-center justify-between bg-gradient-to-r from-primary/5 to-transparent">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                <Sparkles className="h-5 w-5 text-white" />
+          <div className="border-b border-hologram-border/50 px-8 py-6 flex items-center justify-between relative z-10">
+            <div className="flex items-center gap-5">
+              <div className="h-14 w-14 rounded-2xl bg-hologram-cyan/10 border border-hologram-cyan/30 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+                <Sparkles className="h-7 w-7 text-hologram-cyan animate-pulse" />
               </div>
               <div>
-                <h2 className="text-lg font-bold">AI Assistant</h2>
-                <p className="text-sm text-muted-foreground">
-                  {application.companyName} — {application.positionTitle}
-                </p>
+                <h2 className="text-2xl font-black uppercase tracking-tight text-white hologram-heading">AI_ASSISTANT</h2>
+                <div className="flex items-center gap-2 mt-1">
+                   <span className="font-mono text-[9px] text-hologram-cyan/60 uppercase tracking-widest">{application.companyName}</span>
+                   <span className="text-white/20">|</span>
+                   <span className="font-mono text-[9px] text-white/40 uppercase tracking-widest">{application.positionTitle}</span>
+                </div>
               </div>
             </div>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
+            <button 
+              onClick={onClose}
+              className="h-10 w-10 border border-hologram-border/50 rounded-xl flex items-center justify-center bg-white/5 hover:bg-white/10 hover:border-hologram-border transition-all group"
+            >
+              <X className="h-5 w-5 text-white/40 group-hover:text-white" />
+            </button>
           </div>
 
           {/* Tabs */}
-          <div className="border-b border-border px-6 py-2 flex gap-1 overflow-x-auto">
+          <div className="border-b border-hologram-border/50 px-8 py-3 flex gap-2 overflow-x-auto relative z-10">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+                className={cn(
+                  "flex items-center gap-3 px-5 py-3 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all",
                   activeTab === tab.id
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                }`}
+                    ? "bg-hologram-cyan/10 text-hologram-cyan border border-hologram-cyan/30 shadow-[0_0_15px_rgba(6,182,212,0.1)]"
+                    : "text-white/40 border border-transparent hover:bg-white/5"
+                )}
               >
-                <tab.icon className="h-4 w-4" />
+                <tab.icon className={cn("h-4 w-4 transition-colors", activeTab === tab.id ? "text-hologram-cyan" : "text-white/20")} />
                 {tab.label}
               </button>
             ))}
           </div>
-
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-8 relative z-10">
             {error === "configure" ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
-                <div className="h-16 w-16 rounded-2xl bg-amber-500/10 flex items-center justify-center">
-                  <Settings className="h-8 w-8 text-amber-500" />
+              <div className="flex flex-col items-center justify-center py-12 text-center space-y-6">
+                <div className="h-20 w-20 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shadow-[0_0_20px_rgba(245,158,11,0.1)]">
+                  <Settings className="h-10 w-10 text-amber-500" />
                 </div>
-                <h3 className="text-lg font-semibold">AI Not Configured</h3>
-                <p className="text-sm text-muted-foreground max-w-sm">
-                  Set up your AI provider and API key in{" "}
-                  <a href="/settings" className="text-primary underline">
-                    Settings
-                  </a>{" "}
-                  to use AI features. Supports Gemini, GPT, Claude, OpenRouter, and
-                  HuggingFace.
+                <h3 className="text-xl font-black uppercase tracking-tight text-white hologram-heading">AI_NOT_CONFIGURED</h3>
+                <p className="font-mono text-[10px] text-white/40 max-w-sm uppercase leading-relaxed tracking-wider">
+                  LINK_AI_PROVIDER_IN_SYSTEM_SETTINGS_TO_ACTIVATE_SYNAPSE_MODELS
                 </p>
-                <Button
-                  variant="outline"
+                <MonolithButton
                   onClick={() => (window.location.href = "/settings")}
-                  className="gap-2"
+                  className="px-8"
                 >
-                  <Settings className="h-4 w-4" />
-                  Go to Settings
-                </Button>
+                  OPEN_SETTINGS
+                </MonolithButton>
               </div>
             ) : error ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center space-y-3">
-                <AlertCircle className="h-12 w-12 text-destructive/60" />
-                <p className="text-sm text-muted-foreground">{error}</p>
-                <Button
-                  variant="outline"
-                  size="sm"
+              <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+                <div className="h-16 w-16 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center">
+                  <AlertCircle className="h-8 w-8 text-red-500" />
+                </div>
+                <p className="font-mono text-xs text-red-400/60 uppercase tracking-widest">{error}</p>
+                <button
                   onClick={() => generateContent(activeTab)}
+                  className="px-6 py-2 border border-hologram-border rounded-lg text-[10px] font-bold uppercase tracking-widest text-white hover:bg-white/5 transition-all"
                 >
-                  Try Again
-                </Button>
+                  REBOOT_SEQUENCE
+                </button>
               </div>
             ) : isLoading ? (
-              <div className="flex flex-col items-center justify-center py-16 space-y-4">
-                <div className="relative">
-                  <div className="h-16 w-16 rounded-full border-2 border-primary/20 animate-pulse" />
-                  <Loader2 className="h-8 w-8 text-primary animate-spin absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              <div className="flex flex-col items-center justify-center py-20 space-y-8">
+                <div className="relative h-24 w-24">
+                  <div className="absolute inset-0 border-[3px] border-hologram-cyan border-t-transparent animate-spin rounded-full" />
+                  <div className="absolute inset-4 border-[2px] border-hologram-indigo border-b-transparent animate-spin-reverse rounded-full" />
+                  <Sparkles className="absolute inset-0 m-auto h-8 w-8 text-hologram-cyan animate-pulse" />
                 </div>
-                <div className="text-center space-y-1">
-                  <p className="text-sm font-medium">Generating {TABS.find((t) => t.id === activeTab)?.label}...</p>
-                  <p className="text-xs text-muted-foreground">This may take a few seconds</p>
+                <div className="text-center space-y-2">
+                  <p className="font-black text-xl uppercase tracking-[0.2em] text-white animate-pulse">SYNTHESIZING_DATA</p>
+                  <p className="font-mono text-[10px] text-hologram-cyan/40 uppercase tracking-widest">ANALYZING_ROLE // TAILORING_OUTPUT</p>
                 </div>
               </div>
             ) : currentContent ? (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="prose prose-sm dark:prose-invert max-w-none"
+                className="max-w-none"
               >
-                <div className="whitespace-pre-wrap text-sm leading-relaxed bg-muted/30 rounded-xl p-5 border border-border/50">
+                <div className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed bg-white/[0.03] rounded-2xl p-8 border border-hologram-border/50 text-white/80 shadow-inner">
                   {currentContent}
                 </div>
               </motion.div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-16 space-y-4">
-                <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-violet-500/10 to-purple-500/10 flex items-center justify-center">
+              <div className="flex flex-col items-center justify-center py-20 space-y-6">
+                <div className="h-24 w-24 rounded-[2rem] bg-hologram-indigo/10 border border-hologram-indigo/30 flex items-center justify-center shadow-[0_0_30px_rgba(139,92,246,0.15)]">
                   {React.createElement(
                     TABS.find((t) => t.id === activeTab)?.icon || Sparkles,
-                    { className: "h-10 w-10 text-primary/60" }
+                    { className: "h-10 w-10 text-hologram-indigo" }
                   )}
                 </div>
-                <div className="text-center space-y-2">
-                  <h3 className="font-semibold">
-                    {TABS.find((t) => t.id === activeTab)?.label}
+                <div className="text-center space-y-3">
+                  <h3 className="text-xl font-black uppercase tracking-tight text-white hologram-heading">
+                    {TABS.find((t) => t.id === activeTab)?.label}_READY
                   </h3>
-                  <p className="text-sm text-muted-foreground max-w-sm">
-                    {TABS.find((t) => t.id === activeTab)?.description} for{" "}
-                    <span className="font-medium text-foreground">
-                      {application.positionTitle}
-                    </span>{" "}
-                    at{" "}
-                    <span className="font-medium text-foreground">
-                      {application.companyName}
-                    </span>
+                  <p className="font-mono text-[10px] text-white/40 max-w-sm uppercase leading-relaxed tracking-wider">
+                    {TABS.find((t) => t.id === activeTab)?.description} // TARGET: {application.positionTitle}
                   </p>
                 </div>
-                <Button
+                <MonolithButton
                   onClick={() => generateContent(activeTab)}
-                  className="gap-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
+                  glitch
+                  className="px-10 py-4 text-lg"
                 >
-                  <Sparkles className="h-4 w-4" />
-                  Generate
-                </Button>
+                  INITIALIZE_GEN
+                </MonolithButton>
               </div>
             )}
           </div>
 
           {/* Footer */}
           {currentContent && !isLoading && (
-            <div className="border-t border-border px-6 py-3 flex items-center justify-between bg-card/95">
-              <p className="text-xs text-muted-foreground">
-                AI-generated content — review before using
+            <div className="border-t border-hologram-border/50 px-8 py-5 flex items-center justify-between relative z-10 bg-black/40 backdrop-blur-md">
+              <p className="font-mono text-[9px] text-white/20 uppercase tracking-widest">
+                [SYSTEM_NOTE]: AI_GENERATED_CONTENT // REVIEW_BEFORE_DEPLOY
               </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
+              <div className="flex items-center gap-4">
+                <button
                   onClick={() => generateContent(activeTab)}
-                  className="gap-1.5"
+                  className="flex items-center gap-2 px-5 py-2.5 border border-hologram-border rounded-xl text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 transition-all"
                 >
                   <Sparkles className="h-3.5 w-3.5" />
-                  Regenerate
-                </Button>
-                <Button
-                  size="sm"
+                  REGENERATE
+                </button>
+                <MonolithButton
                   onClick={handleCopy}
-                  className="gap-1.5"
+                  className="h-10 px-6 rounded-xl text-[10px]"
                 >
-                  {copied ? (
-                    <Check className="h-3.5 w-3.5" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5" />
-                  )}
-                  {copied ? "Copied!" : "Copy"}
-                </Button>
+                  {copied ? "COPIED_OK" : "COPY_TO_CLIPBOARD"}
+                </MonolithButton>
               </div>
             </div>
           )}

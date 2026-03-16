@@ -1,476 +1,318 @@
 "use client";
 
-import React, { useEffect, useState, useTransition, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
-  Settings,
-  Brain,
-  Users,
-  Cpu,
-  Heart,
+  Search,
+  ChevronRight,
   ChevronDown,
-  BookOpen,
   Lightbulb,
-  Upload,
-  X,
+  CheckCircle2,
+  AlertCircle,
+  HelpCircle,
+  MessageSquare,
+  Gamepad2,
+  Terminal,
 } from "lucide-react";
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { getApplications } from "@/server/actions";
-import { toast } from "sonner";
-import type { Application, Interview } from "@prisma/client";
-import MonolithButton from "@/components/neon/MonolithButton";
 import { cn } from "@/lib/utils";
+import MonolithButton from "@/components/neon/MonolithButton";
+import { toast } from "sonner";
 
-type AppWithInterviews = Application & { interviews: Interview[] };
-
-/* ---------- parsed question types ---------- */
-interface ParsedQuestion {
-  title: string;
+interface Question {
   question: string;
-  hint?: string;
-  difficulty?: "Easy" | "Medium" | "Hard";
-  extras: string[];
-}
-
-function parseQuestions(raw: string): ParsedQuestion[] {
-  const blocks = raw.split(/\n(?=\d+\.\s|\#{1,3}\s)/).filter(Boolean);
-  const questions: ParsedQuestion[] = [];
-
-  for (const block of blocks) {
-    const lines = block.trim().split("\n").filter(Boolean);
-    if (lines.length === 0) continue;
-
-    const titleLine = lines[0].replace(/^[\d#.*]+[\s.:)]+/, "").replace(/\*\*/g, "").trim();
-    if (!titleLine) continue;
-
-    let question = "";
-    let hint = "";
-    let difficulty: "Easy" | "Medium" | "Hard" | undefined;
-    const extras: string[] = [];
-
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      const lower = line.toLowerCase();
-
-      if (lower.startsWith("- **question") || lower.startsWith("**question")) {
-        question = line.replace(/^-?\s*\*\*question\*\*:?\s*/i, "").replace(/\*\*/g, "");
-      } else if (lower.startsWith("- **hint") || lower.startsWith("**hint")) {
-        hint = line.replace(/^-?\s*\*\*hint\*\*:?\s*/i, "").replace(/\*\*/g, "");
-      } else if (lower.startsWith("- **difficulty") || lower.startsWith("**difficulty")) {
-        const d = line.replace(/^-?\s*\*\*difficulty\*\*:?\s*/i, "").replace(/\*\*/g, "").trim();
-        if (d === "Easy" || d === "Medium" || d === "Hard") difficulty = d;
-      } else if (line.startsWith("- ") || line.startsWith("* ")) {
-        extras.push(line.replace(/^[-*]\s+/, "").replace(/\*\*/g, ""));
-      } else {
-        extras.push(line.replace(/\*\*/g, ""));
-      }
-    }
-
-    questions.push({
-      title: titleLine,
-      question: question || titleLine,
-      hint,
-      difficulty,
-      extras: extras.filter(Boolean),
-    });
-  }
-
-  return questions.length > 0 ? questions : [];
+  hint: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  category: string;
+  extras: { label: string; value: string }[];
 }
 
 const CATEGORIES = [
-  {
-    id: "technical",
-    label: "TECHNICAL_CORE",
-    icon: Cpu,
-    desc: "LOGIC & ALGORITHMS",
-    color: "#8B5CF6",
-    bg: "bg-[#8B5CF6]/5",
-    border: "border-[#8B5CF6]",
-  },
-  {
-    id: "behavioral",
-    label: "BEHAVIORAL_DRIVE",
-    icon: Users,
-    desc: "STAR PROTOCOL PREP",
-    color: "#22C55E",
-    bg: "bg-[#22C55E]/5",
-    border: "border-[#22C55E]",
-  },
-  {
-    id: "system_design",
-    label: "SYS_ARCHITECTURE",
-    icon: Brain,
-    desc: "INFRASTRUCTURE DESIGN",
-    color: "#8B5CF6",
-    bg: "bg-[#8B5CF6]/5",
-    border: "border-[#8B5CF6]",
-  },
-  {
-    id: "culture_fit",
-    label: "CULTURE_SYNC",
-    icon: Heart,
-    desc: "VALUES & TEAM FIT",
-    color: "#EF4444",
-    bg: "bg-[#EF4444]/5",
-    border: "border-[#EF4444]",
-  },
+  "General",
+  "Technical",
+  "Behavioral",
+  "System Design",
+  "Culture Fit",
 ];
 
-const difficultyStyles: Record<string, string> = {
-  Easy: "border-[#22C55E] text-[#22C55E] bg-[#22C55E]/5",
-  Medium: "border-[#FBBF24] text-[#FBBF24] bg-[#FBBF24]/5",
-  Hard: "border-[#EF4444] text-[#EF4444] bg-[#EF4444]/5",
-};
-
 export default function InterviewPrepPage() {
-  const [applications, setApplications] = useState<AppWithInterviews[]>([]);
-  const [selectedAppId, setSelectedAppId] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("technical");
-  const [content, setContent] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
+  const [position, setPosition] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("General");
+  const [isLoading, setIsLoading] = useState(false);
+  const [rawOutput, setRawOutput] = useState("");
+  const [parsedQuestions, setParsedQuestions] = useState<Question[]>([]);
   const [expandedQ, setExpandedQ] = useState<number | null>(null);
-  const [resumeText, setResumeText] = useState("");
 
-  const [_isPending, startTransition] = useTransition();
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.type === "text/plain" || file.name.endsWith(".txt")) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setResumeText(ev.target?.result as string);
-        toast.success("RESUME_LOADED");
-      };
-      reader.readAsText(file);
-    } else if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-
-      try {
-        const response = await fetch("/api/pdf-parse", {
-          method: "POST",
-          body: formData,
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          setResumeText(data.text);
-          toast.success("PDF_RESUME_PARSED");
-        } else {
-          toast.error(data.error || "FAILED_PARSE");
-        }
-      } catch (err) {
-        toast.error("INTERFACE_ERROR");
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      toast.error("UNSUPPORTED_TYPE");
-    }
-    e.target.value = "";
-  };
-
-  useEffect(() => {
-    startTransition(async () => {
-      try {
-        const data = await getApplications(false);
-        setApplications(data as AppWithInterviews[]);
-      } catch {}
-    });
-  }, []);
-
-  const selectedApp = applications.find((a) => a.id === selectedAppId);
-  const currentCat = CATEGORIES.find((c) => c.id === selectedCategory)!;
-  const currentContent = content[`${selectedAppId}-${selectedCategory}`];
-  const parsedQuestions = useMemo(
-    () => (currentContent ? parseQuestions(currentContent) : []),
-    [currentContent]
-  );
-
-  const generateQuestions = async () => {
-    if (!selectedApp) {
-      toast.error("SELECT_TARGET_UNIT");
+  const generateInterviewPrep = async () => {
+    if (!position) {
+      toast.error("Please enter the target position");
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    setIsLoading(true);
+    setRawOutput("");
+    setParsedQuestions([]);
+    setExpandedQ(null);
 
     try {
       const response = await fetch("/api/ai/interview-prep", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          companyName: selectedApp.companyName,
-          positionTitle: selectedApp.positionTitle,
+          position,
+          description,
           category: selectedCategory,
-          jobType: selectedApp.jobType,
-          notes: selectedApp.notes || "",
-          resumeText: resumeText.trim() || undefined,
         }),
       });
 
-      const data = await response.json();
+      if (!response.ok) throw new Error("Failed to connect to Neural Network");
 
-      if (!response.ok) {
-        if (data.error === "AI not configured") {
-          setError("configure");
-        } else {
-          setError(data.message || "GENERATION_FAILURE");
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedOutput = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value);
+          accumulatedOutput += chunk;
+          setRawOutput(accumulatedOutput);
         }
-        return;
-      }
 
-      setContent((prev) => ({
-        ...prev,
-        [`${selectedAppId}-${selectedCategory}`]: data.content,
-      }));
-      setExpandedQ(null);
-    } catch {
-      setError("AI_CONNECTION_LOST");
+        // Parse structured output
+        try {
+          // Attempt to find JSON block in output
+          const jsonMatch = accumulatedOutput.match(/```json\n([\s\S]*?)\n```/);
+          if (jsonMatch) {
+            const data = JSON.parse(jsonMatch[1]);
+            setParsedQuestions(data.questions || []);
+          }
+        } catch (e) {
+          console.error("Failed to parse synaptic data:", e);
+        }
+      }
+    } catch (error) {
+      toast.error("SYNAPSE_FAILURE: Could not generate content");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const handleCopy = async () => {
-    const key = `${selectedAppId}-${selectedCategory}`;
-    const text = content[key];
-    if (!text) return;
-    await navigator.clipboard.writeText(text);
-    toast.success("DATA_COPIED");
-  };
-
   return (
-    <div className="space-y-12 max-w-6xl">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-[3px] border-white pb-8">
-        <div>
-          <h1 className="text-5xl font-black tracking-tighter uppercase leading-none">
-            INTERVIEW_PREP_ENGINE
-          </h1>
-          <p className="font-mono text-[10px] font-black uppercase tracking-[0.4em] text-white/40 mt-4">
-            AI_DRIVEN_SCENARIO_GENERATOR // STATUS: READY
-          </p>
-        </div>
+    <div className="space-y-10 max-w-5xl mx-auto pb-20">
+      {/* Hero Header */}
+      <div className="relative">
+        <div className="absolute -left-12 top-0 h-24 w-1 bg-gradient-to-b from-hologram-cyan to-transparent opacity-50" />
+        <h1 className="text-5xl font-black uppercase tracking-tighter text-white hologram-heading">
+          INTERVIEW_SCENARIOS
+        </h1>
+        <p className="font-mono text-[10px] text-white/40 uppercase tracking-[0.3em] mt-4 flex items-center gap-3">
+          <Terminal className="h-3 w-3 text-hologram-cyan" />
+          SYNTHETIC_PREP_ENGINE // TACTICAL_RESPONSE_MOCK
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left Column: Configuration */}
-        <div className="lg:col-span-4 space-y-6">
-          {/* Target Selector */}
-          <div className="border-[3px] border-white bg-black p-6 relative overflow-hidden group">
-            <div className="monolith-scanlines" />
-            <div className="relative z-10 space-y-4">
-              <label className="font-mono text-[10px] font-black uppercase tracking-widest text-white/40 block">TARGET_APPLICATION</label>
-              <Select value={selectedAppId} onValueChange={setSelectedAppId}>
-                <SelectTrigger className="w-full bg-black border-[2px] border-white/20 h-14 rounded-none font-mono text-xs uppercase hover:border-white transition-colors">
-                  <SelectValue placeholder="SELECT_UNIT..." />
-                </SelectTrigger>
-                <SelectContent className="bg-black border-[2px] border-white rounded-none">
-                  {applications.map((app) => (
-                    <SelectItem key={app.id} value={app.id} className="font-mono text-xs uppercase hover:bg-white hover:text-black rounded-none">
-                      {`${app.companyName} // ${app.positionTitle}`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedApp && (
-                <div className="flex gap-2 pt-2">
-                   <span className="text-[9px] font-black px-2 py-0.5 border border-[#8B5CF6] text-[#8B5CF6] uppercase tracking-widest bg-[#8B5CF6]/5">
-                      {selectedApp.status}
-                   </span>
-                   <span className="text-[9px] font-black px-2 py-0.5 border border-white/20 text-white/40 uppercase tracking-widest bg-white/5">
-                      {selectedApp.jobType}
-                   </span>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Left Col: Configuration */}
+        <div className="lg:col-span-5 space-y-8">
+           <div className="border border-hologram-border bg-hologram-glass/40 backdrop-blur-xl rounded-2xl p-8 space-y-8 relative overflow-hidden group shadow-2xl">
+              <div className="absolute inset-0 bg-gradient-to-br from-hologram-cyan/5 to-transparent pointer-events-none" />
+              
+              <div className="space-y-6 relative z-10">
+                <div className="space-y-3">
+                  <Label className="font-mono text-[9px] font-bold uppercase tracking-widest text-hologram-cyan/60">TARGET_POSITION</Label>
+                  <input
+                    type="text"
+                    value={position}
+                    onChange={(e) => setPosition(e.target.value)}
+                    placeholder="E.G. SENIOR_FRONTEND_ENGINEER..."
+                    className="w-full bg-white/5 border border-hologram-border/50 h-14 rounded-xl px-4 text-white font-mono text-sm focus:ring-2 focus:ring-hologram-cyan/20 focus:border-hologram-cyan/50 outline-none transition-all"
+                  />
                 </div>
-              )}
-            </div>
-          </div>
 
-          {/* Resume Block */}
-          <div className="border-[3px] border-white bg-black p-6 relative overflow-hidden group">
-            <div className="monolith-scanlines" />
-            <div className="relative z-10 space-y-4">
-               <div className="flex items-center justify-between">
-                  <label className="font-mono text-[10px] font-black uppercase tracking-widest text-white/40 block">RESUME_BUFFER</label>
-                  {resumeText && <span className="text-[8px] font-black text-[#22C55E] animate-pulse">LOADED_OK</span>}
-               </div>
-               
-               <div className="relative group">
-                 <textarea
-                    value={resumeText}
-                    onChange={(e) => setResumeText(e.target.value)}
-                    className="w-full bg-black border-[2px] border-white/20 p-4 h-40 font-mono text-[11px] text-white/60 outline-none focus:border-[#8B5CF6] transition-colors rounded-none resize-none"
-                    placeholder="PASTE_RESUME_DATA_OR_UPLOAD_BELOW..."
-                 />
-                 <div className="absolute bottom-2 right-2 flex gap-2">
-                    <label className="h-8 w-8 border border-white/20 flex items-center justify-center bg-black hover:bg-white hover:text-black cursor-pointer transition-all">
-                       <Upload className="h-3.5 w-3.5" />
-                       <input type="file" accept=".txt,.text,.pdf" onChange={handleFileUpload} className="hidden" />
-                    </label>
-                    {resumeText && (
-                      <button onClick={() => setResumeText("")} className="h-8 w-8 border border-white/20 flex items-center justify-center bg-black hover:bg-[#EF4444] hover:text-white transition-all">
-                        <X className="h-3.5 w-3.5" />
+                <div className="space-y-3">
+                  <Label className="font-mono text-[9px] font-bold uppercase tracking-widest text-hologram-cyan/60">INTEL_CONTEXT (JOB_DESC)</Label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="PASTE_JD_FOR_HYPER_TARGETED_QUESTIONS..."
+                    className="w-full bg-white/5 border border-hologram-border/50 h-40 rounded-xl p-4 text-white font-mono text-sm focus:ring-2 focus:ring-hologram-cyan/20 focus:border-hologram-cyan/50 outline-none transition-all resize-none"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="font-mono text-[9px] font-bold uppercase tracking-widest text-hologram-cyan/60">SYNAPSE_CATEGORY</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {CATEGORIES.map((cat) => (
+                      <button
+                        key={cat}
+                        onClick={() => setSelectedCategory(cat)}
+                        className={cn(
+                          "px-4 py-2 rounded-lg font-mono text-[9px] uppercase tracking-widest transition-all border",
+                          selectedCategory === cat
+                            ? "bg-hologram-cyan/10 border-hologram-cyan text-hologram-cyan shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+                            : "bg-white/5 border-hologram-border/30 text-white/40 hover:border-white/20 hover:text-white/60"
+                        )}
+                      >
+                        {cat}
                       </button>
-                    )}
-                 </div>
-               </div>
-            </div>
-          </div>
+                    ))}
+                  </div>
+                </div>
 
-          <MonolithButton 
-            onClick={generateQuestions} 
-            disabled={!selectedAppId || loading} 
-            glitch 
-            className="w-full text-lg py-5"
-          >
-            {loading ? "PROCESSING..." : "RUN_PREP_SIMULATION"}
-          </MonolithButton>
+                <MonolithButton
+                  onClick={generateInterviewPrep}
+                  disabled={isLoading}
+                  glitch
+                  className="w-full py-5 text-xl mt-4"
+                >
+                  {isLoading ? "SYNC_PROCESSING..." : "INITIALIZE_SIM"}
+                </MonolithButton>
+              </div>
+           </div>
+
+           {/* Quick Stats / Info */}
+           <div className="p-6 border border-hologram-border/20 bg-white/[0.02] rounded-2xl flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                 <div className="h-10 w-10 rounded-xl bg-hologram-indigo/10 border border-hologram-indigo/30 flex items-center justify-center">
+                    <Gamepad2 className="h-5 w-5 text-hologram-indigo" />
+                 </div>
+                 <div>
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-white/80">SIMULATION_READY</h4>
+                    <p className="text-[8px] font-mono text-white/30 uppercase">ENGINE_CONNECTED // v4.0.2</p>
+                 </div>
+              </div>
+              <div className="h-2 w-2 rounded-full bg-hologram-cyan animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+           </div>
         </div>
 
-        {/* Right Column: Categories & Output */}
-        <div className="lg:col-span-8 space-y-8">
-          {/* Category Selector */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={cn(
-                  "border-[3px] p-4 text-left relative overflow-hidden transition-all hover:-translate-y-1",
-                  selectedCategory === cat.id ? "border-white bg-white text-black" : "border-white/10 bg-black text-white/40"
-                )}
-              >
-                <div className="monolith-scanlines rounded-none opacity-20" />
-                <div className="relative z-10">
-                  <cat.icon className={cn("h-5 w-5 mb-2", selectedCategory === cat.id ? "text-black" : "")} />
-                  <p className="font-black text-[10px] uppercase tracking-tighter">{cat.label}</p>
-                </div>
-              </button>
-            ))}
-          </div>
+        {/* Right Col: Output */}
+        <div className="lg:col-span-7">
+           {isLoading || parsedQuestions.length > 0 || rawOutput ? (
+              <div className="space-y-6">
+                 {parsedQuestions.map((q, i) => (
+                   <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                      className="border border-hologram-border bg-hologram-glass/40 backdrop-blur-xl rounded-2xl overflow-hidden group shadow-lg"
+                   >
+                      <button
+                        onClick={() => setExpandedQ(expandedQ === i ? null : i)}
+                        className="w-full p-8 flex items-start justify-between text-left hover:bg-white/[0.02] transition-colors group/q"
+                      >
+                        <div className="space-y-4">
+                           <div className="flex items-center gap-3">
+                              <span className="h-7 w-12 border border-hologram-cyan/40 bg-hologram-cyan/5 text-[10px] font-mono font-black text-hologram-cyan flex items-center justify-center rounded-lg">
+                                #{String(i + 1).padStart(2, '0')}
+                              </span>
+                              <span className="px-3 py-1 border border-white/10 text-[8px] font-mono font-bold uppercase tracking-[0.2em] text-white/40 rounded-lg">
+                                {selectedCategory}_SYNAPSE
+                              </span>
+                           </div>
+                           <h3 className="text-lg font-black uppercase tracking-tight text-white/90 leading-tight pr-8">
+                             {q.question}
+                           </h3>
+                           {q.difficulty && (
+                             <span className={cn(
+                               "inline-block px-3 py-1 border text-[8px] font-bold uppercase tracking-[0.2em] rounded-lg", 
+                               q.difficulty === "Easy" ? "border-green-500/30 text-green-400 bg-green-500/5" :
+                               q.difficulty === "Medium" ? "border-amber-500/30 text-amber-400 bg-amber-500/5" :
+                               "border-red-500/30 text-red-400 bg-red-500/5"
+                             )}>
+                                 {q.difficulty}_LEVEL
+                             </span>
+                           )}
+                        </div>
+                        <ChevronDown className={cn("h-6 w-6 text-white/20 transition-all duration-500 group-hover/q:text-white/40 mt-1", expandedQ === i ? "rotate-180" : "")} />
+                      </button>
 
-          {/* Output Terminal */}
-          <div className="border-[3px] border-white bg-black min-h-[500px] relative overflow-hidden">
-             <div className="monolith-scanlines rounded-none" />
-             <div className="relative z-10 p-8">
-                {error === "configure" ? (
-                  <div className="py-20 flex flex-col items-center text-center space-y-6">
-                     <Settings className="h-16 w-16 text-white/20" />
-                     <h3 className="text-xl font-black uppercase tracking-widest">AI_CONFIG_ERROR</h3>
-                     <p className="font-mono text-xs text-white/40 max-w-xs uppercase">LINK_AI_PROVIDER_IN_SYSTEM_SETTINGS_TO_PROCEED</p>
-                     <MonolithButton onClick={() => window.location.href = "/settings"} variant="black">OPEN_SETTINGS</MonolithButton>
-                  </div>
-                ) : loading ? (
-                  <div className="py-20 flex flex-col items-center text-center space-y-8 text-[#8B5CF6]">
-                     <div className="relative h-24 w-24">
-                        <div className="absolute inset-0 border-[4px] border-[#8B5CF6] border-t-transparent animate-spin" />
-                        <div className="absolute inset-4 border-[2px] border-[#8B5CF6] border-b-transparent animate-spin-reverse" />
-                        <Cpu className="absolute inset-0 m-auto h-8 w-8" />
-                     </div>
-                     <div className="space-y-2">
-                        <p className="font-black text-2xl uppercase tracking-widest animate-pulse">COMPUTING_SCENARIOS</p>
-                        <p className="font-mono text-xs text-white/40 uppercase tracking-widest">ANALYZING_JOB_SPEC // TAILORING_QUESTIONS</p>
-                     </div>
-                  </div>
-                ) : parsedQuestions.length > 0 ? (
-                  <div className="space-y-8">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-6">
-                       <div className="flex items-center gap-4">
-                          <div className="h-10 w-10 border-[2px] border-[#8B5CF6] flex items-center justify-center text-[#8B5CF6]">
-                             <Sparkles className="h-5 w-5" />
-                          </div>
-                          <div>
-                             <h2 className="text-xl font-black uppercase tracking-tight">{currentCat.label}_ROUTINE</h2>
-                             <p className="font-mono text-[9px] text-white/40 uppercase tracking-[0.2em]">{parsedQuestions.length} VECTORS_IDENTIFIED</p>
-                          </div>
-                       </div>
-                       <MonolithButton onClick={handleCopy} variant="black" className="h-10 px-4 text-xs">COPY_DATA</MonolithButton>
-                    </div>
+                      <AnimatePresence>
+                        {expandedQ === i && (
+                          <motion.div
+                             initial={{ height: 0 }}
+                             animate={{ height: "auto" }}
+                             exit={{ height: 0 }}
+                             className="overflow-hidden border-t border-hologram-border bg-white/[0.02] rounded-b-2xl"
+                          >
+                             <div className="p-8 space-y-8 relative overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-br from-hologram-indigo/5 to-transparent pointer-events-none" />
+                                
+                                {q.hint && (
+                                   <div className="border border-hologram-indigo/20 bg-hologram-indigo/5 rounded-2xl p-6 relative group/hint">
+                                      <div className="absolute top-0 left-0 w-1 h-full bg-hologram-indigo/50" />
+                                      <p className="text-[10px] font-mono font-black text-hologram-indigo uppercase tracking-[0.3em] mb-3 flex items-center gap-3">
+                                         <Lightbulb className="h-4 w-4" /> INTEL_HINT
+                                      </p>
+                                      <p className="font-mono text-[12px] text-white/70 leading-relaxed uppercase">{q.hint}</p>
+                                   </div>
+                                )}
+                                
+                                {q.extras.length > 0 && (
+                                   <div className="grid grid-cols-2 gap-4">
+                                      {q.extras.map((extra, idx) => (
+                                         <div key={idx} className="p-5 border border-hologram-border/30 bg-white/5 rounded-2xl group/extra hover:border-hologram-cyan/30 transition-all">
+                                            <p className="text-[8px] font-mono text-white/30 uppercase tracking-widest mb-1">{extra.label}</p>
+                                            <p className="text-[11px] font-bold text-hologram-cyan uppercase tracking-wider">{extra.value}</p>
+                                         </div>
+                                      ))}
+                                   </div>
+                                )}
 
-                    <div className="space-y-4">
-                       {parsedQuestions.map((q, i) => (
-                         <div key={i} className="border-[2px] border-white/10 bg-black overflow-hidden hover:border-[#8B5CF6] transition-all group">
-                            <button
-                               onClick={() => setExpandedQ(expandedQ === i ? null : i)}
-                               className="w-full text-left p-6 flex gap-6 items-start"
-                            >
-                               <span className="font-black text-2xl text-white/10 group-hover:text-[#8B5CF6] transition-colors">{(i + 1).toString().padStart(2, '0')}</span>
-                               <div className="flex-1 space-y-3">
-                                  <p className="text-sm font-black uppercase tracking-tight leading-relaxed">{q.question || q.title}</p>
-                                  {q.difficulty && (
-                                    <span className={cn("inline-block px-3 py-0.5 border-[2px] text-[8px] font-black uppercase tracking-widest", difficultyStyles[q.difficulty])}>
-                                        {q.difficulty}_LEVEL
-                                    </span>
-                                  )}
-                               </div>
-                               <ChevronDown className={cn("h-4 w-4 text-white/20 transition-transform", expandedQ === i ? "rotate-180" : "")} />
-                            </button>
-                            <AnimatePresence>
-                               {expandedQ === i && (
-                                 <motion.div
-                                    initial={{ height: 0 }}
-                                    animate={{ height: "auto" }}
-                                    exit={{ height: 0 }}
-                                    className="overflow-hidden border-t-[2px] border-white/10"
-                                 >
-                                    <div className="p-6 bg-white/[0.02] space-y-6">
-                                       {q.hint && (
-                                          <div className="border-l-[4px] border-[#FBBF24] p-4 bg-[#FBBF24]/5">
-                                             <p className="text-[8px] font-mono font-black text-[#FBBF24] uppercase tracking-widest mb-2 flex items-center gap-2">
-                                                <Lightbulb className="h-3 w-3" /> INTEL_HINT
-                                             </p>
-                                             <p className="text-xs font-mono text-white/60 leading-relaxed uppercase">{q.hint}</p>
-                                          </div>
-                                       )}
-                                       {q.extras.length > 0 && (
-                                          <div className="space-y-3">
-                                             <p className="text-[8px] font-mono font-black text-white/20 uppercase tracking-widest">SUPPLEMENTARY_DATA_POINTS</p>
-                                             <div className="grid grid-cols-1 gap-2">
-                                                {q.extras.map((extra, j) => (
-                                                  <div key={j} className="flex items-start gap-3 p-3 bg-white/5 border border-white/5">
-                                                     <div className="w-1 h-1 bg-[#8B5CF6] mt-1.5" />
-                                                     <p className="text-[10px] font-mono text-white/40 uppercase">{extra}</p>
-                                                  </div>
-                                                ))}
-                                             </div>
-                                          </div>
-                                       )}
-                                    </div>
-                                 </motion.div>
-                               )}
-                            </AnimatePresence>
-                         </div>
-                       ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="py-20 flex flex-col items-center text-center space-y-6">
-                     <BookOpen className="h-16 w-16 text-white/20" />
-                     <h3 className="text-xl font-black uppercase tracking-widest">READY_FOR_SIMULATION</h3>
-                     <p className="font-mono text-xs text-white/40 max-w-xs uppercase">SELECT_UNIT_AND_INITIALIZE_TO_GENERATE_TRAINING_SCENARIOS</p>
-                  </div>
-                )}
-             </div>
-          </div>
+                                <MonolithButton className="w-full py-4 text-[10px]">
+                                   PRACTICE_REP_SEQUENCE
+                                </MonolithButton>
+                             </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                   </motion.div>
+                 ))}
+
+                 {isLoading && !parsedQuestions.length && (
+                   <div className="border border-hologram-border bg-hologram-glass/40 backdrop-blur-xl rounded-2xl p-12 flex flex-col items-center justify-center space-y-8 min-h-[400px]">
+                      <div className="relative h-20 w-20">
+                        <div className="absolute inset-0 border-[3px] border-hologram-cyan border-t-transparent animate-spin rounded-full" />
+                        <Sparkles className="absolute inset-0 m-auto h-8 w-8 text-hologram-cyan animate-pulse" />
+                      </div>
+                      <div className="text-center space-y-2">
+                         <h3 className="text-2xl font-black uppercase tracking-[0.3em] text-white animate-pulse">SYNTHESIZING_SCENARIOS</h3>
+                         <p className="font-mono text-[10px] text-hologram-cyan/40 uppercase tracking-widest">MAP_REDUCING_INTERVIEW_PATTERNS</p>
+                      </div>
+                   </div>
+                 )}
+              </div>
+           ) : (
+              <div className="border border-dashed border-hologram-border/30 rounded-3xl p-20 flex flex-col items-center justify-center text-center space-y-10 group bg-white/[0.01]">
+                 <div className="h-24 w-24 rounded-[2rem] bg-white/5 border border-hologram-border/20 flex items-center justify-center group-hover:border-hologram-cyan/30 transition-all shadow-inner">
+                   <HelpCircle className="h-10 w-10 text-white/20 group-hover:text-hologram-cyan/40 transition-all" />
+                 </div>
+                 <div className="space-y-4">
+                    <h3 className="text-2xl font-black uppercase tracking-tight text-white/40">NO_DATA_STREAMS</h3>
+                    <p className="font-mono text-[10px] text-white/20 max-w-xs mx-auto uppercase leading-relaxed tracking-widest">
+                       INITIALIZE_CONFIGURATION_ON_THE_LEFT_TO_REVEAL_INTERVIEW_INTEL
+                    </p>
+                 </div>
+                 <div className="flex gap-4">
+                   {[1,2,3].map(i => (
+                     <div key={i} className="h-1 w-8 bg-white/5 rounded-full" />
+                   ))}
+                 </div>
+              </div>
+           )}
         </div>
       </div>
     </div>
+  );
+}
+
+function Label({ children, className }: { children: React.ReactNode, className?: string }) {
+  return (
+    <label className={cn("block font-medium text-muted-foreground mb-1", className)}>
+      {children}
+    </label>
   );
 }

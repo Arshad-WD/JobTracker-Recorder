@@ -67,20 +67,20 @@ export function TableView({ applications, onSelect }: TableViewProps) {
   };
 
   return (
-    <div className="border-[3px] border-white bg-black overflow-hidden relative">
-      <div className="monolith-scanlines rounded-none" />
+    <div className="border border-hologram-border bg-hologram-glass/40 backdrop-blur-xl rounded-2xl overflow-hidden relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-hologram-cyan/5 via-transparent to-hologram-indigo/5 pointer-events-none" />
       <div className="overflow-x-auto relative z-10">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="border-b-[3px] border-white bg-white">
-              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4">UNIT_ID</th>
-              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 hidden md:table-cell">POSITION_VECTOR</th>
-              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4">NODE_STATUS</th>
-              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 hidden lg:table-cell">UPSTREAM_SRC</th>
-              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 hidden sm:table-cell">DEPLOY_TYPE</th>
-              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 hidden md:table-cell">MATCH_IDX</th>
-              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 hidden sm:table-cell">TIMESTAMP</th>
-              <th className="text-left text-[10px] font-black uppercase tracking-widest text-black px-6 py-4 w-10"></th>
+            <tr className="border-b border-hologram-border bg-white/5">
+              <th className="text-left text-[9px] font-bold uppercase tracking-[0.2em] text-hologram-cyan px-6 py-4">UNIT_ID</th>
+              <th className="text-left text-[9px] font-bold uppercase tracking-[0.2em] text-hologram-cyan px-6 py-4 hidden md:table-cell">POSITION_VECTOR</th>
+              <th className="text-left text-[9px] font-bold uppercase tracking-[0.2em] text-hologram-cyan px-6 py-4">NODE_STATUS</th>
+              <th className="text-left text-[9px] font-bold uppercase tracking-[0.2em] text-hologram-cyan px-6 py-4 hidden lg:table-cell">UPSTREAM_SRC</th>
+              <th className="text-left text-[9px] font-bold uppercase tracking-[0.2em] text-hologram-cyan px-6 py-4 hidden sm:table-cell">DEPLOY_TYPE</th>
+              <th className="text-left text-[9px] font-bold uppercase tracking-[0.2em] text-hologram-cyan px-6 py-4 hidden md:table-cell">MATCH_IDX</th>
+              <th className="text-left text-[9px] font-bold uppercase tracking-[0.2em] text-hologram-cyan px-6 py-4 hidden sm:table-cell">TIMESTAMP</th>
+              <th className="text-left text-[9px] font-bold uppercase tracking-[0.2em] text-hologram-cyan px-6 py-4 w-10"></th>
             </tr>
           </thead>
           <tbody className="font-mono text-[11px]">
@@ -90,16 +90,16 @@ export function TableView({ applications, onSelect }: TableViewProps) {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="border-b border-white/10 hover:bg-white/5 cursor-pointer group transition-colors"
+                className="border-b border-hologram-border/50 hover:bg-hologram-cyan/5 cursor-pointer group transition-colors"
                 onClick={() => onSelect(app.id)}
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 border-[2px] border-white bg-black flex items-center justify-center flex-shrink-0 group-hover:bg-white group-hover:text-black transition-colors">
-                      <span className="text-sm font-black uppercase">{app.companyName.charAt(0)}</span>
+                    <div className="h-10 w-10 border border-hologram-border bg-hologram-glass flex items-center justify-center flex-shrink-0 group-hover:border-hologram-cyan transition-all rounded-lg shadow-sm">
+                      <span className="text-sm font-black uppercase text-hologram-cyan">{app.companyName.charAt(0)}</span>
                     </div>
                     <div>
-                      <p className="font-black uppercase tracking-widest text-white group-hover:text-[#8B5CF6] transition-colors">{app.companyName}</p>
+                      <p className="font-bold uppercase tracking-tight text-white group-hover:text-hologram-cyan transition-colors hologram-heading">{app.companyName}</p>
                       {app.location && (
                         <p className="text-[8px] text-white/40 flex items-center gap-1 uppercase tracking-tighter mt-0.5">
                           <MapPin className="h-2.5 w-2.5" />
@@ -112,10 +112,10 @@ export function TableView({ applications, onSelect }: TableViewProps) {
                 <td className="px-6 py-4 text-white/60 uppercase font-black tracking-tight hidden md:table-cell">{app.positionTitle}</td>
                 <td className="px-6 py-4">
                   <span className={cn(
-                    "px-3 py-1 border-[2px] font-black text-[9px] uppercase tracking-widest",
-                    app.status === "OFFER" ? "border-[#22C55E] text-[#22C55E]" : 
-                    app.status === "REJECTED" ? "border-[#EF4444] text-[#EF4444]" : 
-                    "border-white/20 text-white/60"
+                    "px-3 py-1 border font-bold text-[9px] uppercase tracking-widest rounded-lg",
+                    app.status === "OFFER" ? "border-green-500/50 text-green-400 bg-green-500/5" : 
+                    app.status === "REJECTED" ? "border-red-500/50 text-red-400 bg-red-500/5" : 
+                    "border-hologram-border/50 text-white/40"
                   )}>
                     {getStatusLabel(app.status)}
                   </span>
@@ -130,14 +130,14 @@ export function TableView({ applications, onSelect }: TableViewProps) {
                 </td>
                 <td className="px-6 py-4 hidden md:table-cell">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-16 border border-white/20 bg-black p-0.5 overflow-hidden">
+                    <div className="h-1 w-16 bg-white/5 rounded-full overflow-hidden relative">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${calculateApplicationScore(app)}%` }}
-                        className="h-full bg-[#8B5CF6]"
+                        className="h-full bg-gradient-to-r from-hologram-indigo to-hologram-cyan"
                       />
                     </div>
-                    <span className="text-[#8B5CF6] font-black">{calculateApplicationScore(app)}</span>
+                    <span className="text-hologram-cyan font-bold">{calculateApplicationScore(app)}%</span>
                   </div>
                 </td>
                 <td className="px-6 py-4 text-white/40 hidden sm:table-cell uppercase tracking-tighter">

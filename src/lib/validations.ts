@@ -13,7 +13,6 @@ export const applicationCreateSchema = z.object({
     appliedDate: z.coerce.date().optional(),
     followUpDate: z.coerce.date().optional().nullable(),
     recruiterName: z.string().max(200).optional().nullable(),
-    recruiterEmail: z.string().email().optional().nullable().or(z.literal("")),
     recruiterPhone: z.string().max(50).optional().nullable(),
     jobLink: z.string().url().optional().nullable().or(z.literal("")),
     resumeVersion: z.string().max(100).optional().nullable(),

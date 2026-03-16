@@ -57,7 +57,6 @@ export function EditApplicationModal({
     location: application.location || "",
     priority: application.priority,
     recruiterName: application.recruiterName || "",
-    recruiterEmail: application.recruiterEmail || "",
     recruiterPhone: application.recruiterPhone || "",
     jobLink: application.jobLink || "",
     resumeVersion: application.resumeVersion || "",
@@ -88,7 +87,6 @@ export function EditApplicationModal({
           location: formData.location || null,
           priority: formData.priority,
           recruiterName: formData.recruiterName || null,
-          recruiterEmail: formData.recruiterEmail || null,
           recruiterPhone: formData.recruiterPhone || null,
           jobLink: formData.jobLink || null,
           resumeVersion: formData.resumeVersion || null,
@@ -285,21 +283,6 @@ export function EditApplicationModal({
                       handleChange("recruiterName", e.target.value)
                     }
                     placeholder="Recruiter name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2 text-sm font-medium">
-                    <Mail className="h-3.5 w-3.5 text-muted-foreground" />
-                    Email
-                  </Label>
-                  <input
-                    type="email"
-                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                    value={formData.recruiterEmail}
-                    onChange={(e) =>
-                      handleChange("recruiterEmail", e.target.value)
-                    }
-                    placeholder="email@company.com"
                   />
                 </div>
                 <div className="space-y-2">

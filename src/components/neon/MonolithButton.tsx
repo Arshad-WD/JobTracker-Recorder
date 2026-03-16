@@ -12,12 +12,12 @@ const MonolithButton: React.FC<MonolithButtonProps> = ({
   className = '', 
   ...props 
 }) => {
-  const baseStyles = "relative px-6 py-3 font-bold uppercase transition-all duration-75 active:translate-x-1 active:translate-y-1 active:shadow-none border-[3px] border-black text-black";
+  const baseStyles = "relative px-6 py-3 font-bold uppercase transition-all duration-300 active:scale-95 border rounded-xl flex items-center justify-center gap-2 overflow-hidden group";
   
   const variants = {
-    violet: "bg-[#8B5CF6] shadow-[4px_4px_0px_#000000] hover:bg-[#A78BFA]",
-    green: "bg-[#22C55E] shadow-[4px_4px_0px_#000000] hover:bg-[#4ADE80]",
-    black: "bg-black text-white shadow-[4px_4px_0px_#8B5CF6] hover:bg-[#1a1a1a] border-[#8B5CF6]",
+    violet: "bg-hologram-indigo/20 border-hologram-indigo/50 text-white hover:bg-hologram-indigo/30 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)]",
+    green: "bg-hologram-cyan/20 border-hologram-cyan/50 text-white hover:bg-hologram-cyan/30 hover:shadow-[0_0_20px_rgba(6,182,212,0.4)]",
+    black: "bg-white/5 border-hologram-border text-white hover:bg-white/10 hover:border-hologram-cyan/30",
   };
 
   return (
@@ -25,6 +25,8 @@ const MonolithButton: React.FC<MonolithButtonProps> = ({
       className={`${baseStyles} ${variants[variant]} ${glitch ? 'glitch-hover' : ''} ${className}`}
       {...props}
     >
+      {/* Glossy overlay */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       <span className="relative z-10">{children}</span>
     </button>
   );

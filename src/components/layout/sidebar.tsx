@@ -66,19 +66,19 @@ export function Sidebar() {
           x: isMobile ? (sidebarOpen ? 0 : -280) : 0,
         }}
         transition={{ duration: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className="fixed left-0 top-0 z-40 h-screen border-r-[3px] border-white bg-black/95 flex flex-col"
+        className="fixed left-0 top-0 z-40 h-screen border-r border-hologram-border bg-hologram-glass/80 backdrop-blur-2xl flex flex-col"
       >
         {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-4 border-b-[3px] border-white">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-hologram-border">
           {(sidebarOpen || isMobile) ? (
-            <div className="flex items-center gap-2 overflow-hidden">
+            <div className="flex items-center gap-2 overflow-hidden px-2">
               <span className="font-black text-xl uppercase tracking-tighter text-white">
-                JOB<span className="text-[#8B5CF6]">TRACKER</span>
+                JOB<span className="text-hologram-cyan drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]">TRACKER</span>
               </span>
             </div>
           ) : (
-            <div className="h-8 w-8 bg-white flex items-center justify-center mx-auto">
-              <span className="font-black text-xs text-black">JT</span>
+            <div className="h-8 w-8 bg-hologram-cyan/20 border border-hologram-cyan/50 flex items-center justify-center mx-auto rounded-lg">
+              <span className="font-black text-xs text-hologram-cyan">JT</span>
             </div>
           )}
 
@@ -101,8 +101,8 @@ export function Sidebar() {
             <TooltipTrigger asChild>
               <button
                 className={cn(
-                  "w-full h-12 flex items-center gap-4 px-4 bg-[#8B5CF6] text-black font-black uppercase text-[10px] tracking-widest transition-all",
-                  "shadow-[4px_4px_0px_#22C55E] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-x-1 active:translate-y-1 active:shadow-none",
+                  "w-full h-12 flex items-center gap-4 px-4 bg-hologram-indigo/20 border border-hologram-indigo/50 text-white font-bold uppercase text-[10px] tracking-widest transition-all rounded-xl",
+                  "hover:bg-hologram-indigo/30 hover:shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:-translate-y-0.5",
                   !sidebarOpen && !isMobile && "justify-center px-0"
                 )}
                 onClick={() => {
@@ -110,7 +110,7 @@ export function Sidebar() {
                   if (isMobile) setSidebarOpen(false);
                 }}
               >
-                <Plus className="h-4 w-4 flex-shrink-0" />
+                <Plus className="h-4 w-4 flex-shrink-0 text-hologram-cyan" />
                 {(sidebarOpen || isMobile) && <span>Quick_Add</span>}
               </button>
             </TooltipTrigger>
@@ -131,14 +131,14 @@ export function Sidebar() {
                       if (isMobile) setSidebarOpen(false);
                     }}
                     className={cn(
-                      "flex items-center gap-4 px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all relative border-[2px] border-transparent",
+                      "flex items-center gap-4 px-4 py-3 text-[10px] font-bold uppercase tracking-widest transition-all relative border border-transparent rounded-xl mx-1",
                       isActive
-                        ? "text-[#8B5CF6] border-white !border-l-[6px] bg-white/5"
+                        ? "text-hologram-cyan border-hologram-cyan/50 bg-hologram-cyan/10 shadow-[inset_0_0_12px_rgba(6,182,212,0.1)]"
                         : "text-white/40 hover:text-white hover:bg-white/5",
                       !sidebarOpen && !isMobile && "justify-center px-0"
                     )}
                   >
-                    <item.icon className={cn("h-4 w-4 flex-shrink-0", isActive ? "text-[#8B5CF6]" : "text-white/40")} />
+                    <item.icon className={cn("h-4 w-4 flex-shrink-0", isActive ? "text-hologram-cyan drop-shadow-[0_0_5px_rgba(6,182,212,0.5)]" : "text-white/40")} />
                     {(sidebarOpen || isMobile) && <span className="truncate">{item.label}</span>}
                   </Link>
                 </TooltipTrigger>
@@ -150,9 +150,9 @@ export function Sidebar() {
 
         {/* Collapse toggle - desktop only */}
         {!isMobile && (
-          <div className="p-3 border-t-[3px] border-white">
+          <div className="p-3 border-t border-hologram-border">
             <button
-              className="w-full flex justify-center py-2 text-white/40 hover:text-[#8B5CF6] transition-colors"
+              className="w-full h-8 flex justify-center items-center text-white/40 hover:text-hologram-cyan transition-colors bg-white/5 rounded-lg border border-transparent hover:border-hologram-cyan/30"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               {sidebarOpen ? (
@@ -164,7 +164,6 @@ export function Sidebar() {
           </div>
         )}
       </motion.aside>
-
     </TooltipProvider>
   );
 }

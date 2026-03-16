@@ -161,12 +161,6 @@ export function QuickSearchMode() {
                         <span>{app.recruiterName}</span>
                       </div>
                     )}
-                    {app.recruiterEmail && (
-                      <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <Mail className="h-3.5 w-3.5" />
-                        <span>{app.recruiterEmail}</span>
-                      </div>
-                    )}
                     {app.recruiterPhone && (
                       <div className="flex items-center gap-1.5 text-muted-foreground">
                         <Phone className="h-3.5 w-3.5" />

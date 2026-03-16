@@ -105,20 +105,20 @@ const HeroHeader = memo(({ greeting, analytics, onAdd }: {
   analytics: NonNullable<Analytics>; 
   onAdd: () => void 
 }) => (
-  <div className="relative border-[3px] border-white bg-black p-8 md:p-12">
-    {/* Decorative corner accents */}
-    <div className="absolute top-0 left-0 w-8 h-8 border-t-[3px] border-l-[3px] border-[#8B5CF6] -translate-x-1 -translate-y-1" />
-    <div className="absolute bottom-0 right-0 w-8 h-8 border-b-[3px] border-r-[3px] border-[#22C55E] translate-x-1 translate-y-1" />
+  <div className="relative border border-hologram-border bg-hologram-glass backdrop-blur-xl p-8 md:p-12 rounded-2xl overflow-hidden">
+    {/* Decorative holographic glows */}
+    <div className="absolute -top-24 -left-24 h-64 w-64 bg-hologram-indigo/10 blur-[100px]" />
+    <div className="absolute -bottom-24 -right-24 h-64 w-64 bg-hologram-cyan/10 blur-[100px]" />
 
     <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
-      <div className="space-y-4">
-        <div className="inline-block px-3 py-1 bg-[#8B5CF6] text-black font-mono text-[10px] font-black uppercase tracking-widest mb-2">
+      <div className="space-y-4 relative z-10">
+        <div className="inline-block px-3 py-1 bg-hologram-indigo/20 border border-hologram-indigo/50 text-hologram-cyan font-mono text-[10px] font-bold uppercase tracking-widest mb-2 rounded-full">
           SESSION_INITIATED
         </div>
-        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
-          {greeting}, <span className="text-[#8B5CF6]">OPERATOR</span>
+        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none hologram-heading">
+          {greeting}, <span className="text-hologram-indigo">OPERATOR</span>
         </h1>
-        <p className="font-mono text-xs text-white/40 max-w-xl uppercase leading-relaxed">
+        <p className="font-mono text-xs text-white/60 max-w-xl uppercase leading-relaxed">
           {analytics.totalApps === 0
             ? "NO_ACTIVE_TARGETS_FOUND. INITIALIZE_APPLICATION_SEQUENCE_TO_PROCEED."
             : `COMMANDING_${analytics.totalApps}_ACTIVE_APPLICATIONS. ${analytics.needsFollowUp > 0 ? `ACTION_REQUIRED:_FOLLOW_UP_WITH_${analytics.needsFollowUp}_TARGETS.` : "ALL_SYSTEMS_NOMINAL"}`}
@@ -130,11 +130,11 @@ const HeroHeader = memo(({ greeting, analytics, onAdd }: {
     </div>
 
     {/* Quick Stats Grid */}
-    <div className="mt-12 grid grid-cols-2 md:grid-cols-4 border-t-[3px] border-white">
+    <div className="mt-12 grid grid-cols-2 md:grid-cols-4 border-t border-hologram-border">
       <SimpleStat label="Active_Apps" value={analytics.totalApps} tag="01" />
-      <SimpleStat label="Conv_Rate" value={`${analytics.interviewConversionRate}%`} color="text-[#8B5CF6]" tag="02" />
-      <SimpleStat label="Off_Secured" value={analytics.offerCount} color="text-[#22C55E]" tag="03" />
-      <SimpleStat label="Act_Required" value={analytics.needsFollowUp} color={analytics.needsFollowUp > 0 ? "text-[#F59E0B]" : "text-white/20"} tag="04" />
+      <SimpleStat label="Conv_Rate" value={`${analytics.interviewConversionRate}%`} color="text-hologram-indigo" tag="02" />
+      <SimpleStat label="Off_Secured" value={analytics.offerCount} color="text-hologram-cyan" tag="03" />
+      <SimpleStat label="Act_Required" value={analytics.needsFollowUp} color={analytics.needsFollowUp > 0 ? "text-amber-400" : "text-white/20"} tag="04" />
     </div>
   </div>
 ));
@@ -146,8 +146,8 @@ const InsightsSection = memo(({ insights }: { insights: Insight[] }) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-[#8B5CF6]">System_Insights</h2>
-        <div className="flex-1 h-[2px] bg-white/10" />
+        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-hologram-indigo">System_Insights</h2>
+        <div className="flex-1 h-px bg-hologram-border" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {insights.map((insight) => (
@@ -171,15 +171,15 @@ const RecentApplications = memo(({ analytics }: { analytics: NonNullable<Analyti
   <div className="space-y-6">
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-[#22C55E]">Recent_Activity</h2>
-        <div className="h-[2px] w-24 bg-white/10" />
+        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-hologram-cyan">Recent_Activity</h2>
+        <div className="h-px w-24 bg-hologram-border" />
       </div>
       <Link href="/applications" className="font-mono text-[10px] text-white/40 hover:text-white uppercase tracking-widest flex items-center gap-2">
         Full_Log <ArrowUpRight className="h-3 w-3" />
       </Link>
     </div>
 
-    <div className="border-[3px] border-white divide-y-[3px] divide-white bg-black">
+    <div className="border border-hologram-border divide-y divide-hologram-border bg-hologram-glass/40 backdrop-blur-md rounded-2xl overflow-hidden">
       {analytics.recentApps.length === 0 ? (
         <div className="py-20 flex flex-col items-center justify-center opacity-20">
           <Ghost className="h-12 w-12 mb-4" />
@@ -193,11 +193,11 @@ const RecentApplications = memo(({ analytics }: { analytics: NonNullable<Analyti
             className="flex flex-col md:flex-row md:items-center justify-between p-6 hover:bg-[#8B5CF6]/5 group transition-colors"
           >
             <div className="flex items-center gap-6">
-              <div className="h-10 w-10 border-[2px] border-white/20 items-center justify-center hidden md:flex font-black text-white/20 group-hover:border-[#8B5CF6] group-hover:text-[#8B5CF6] transition-colors">
+              <div className="h-10 w-10 border border-hologram-border flex items-center justify-center hidden md:flex font-black text-white/20 group-hover:border-hologram-indigo group-hover:text-hologram-indigo transition-all rounded-lg bg-white/5">
                 {app.companyName.charAt(0).toUpperCase()}
               </div>
               <div>
-                <h3 className="text-lg font-black uppercase tracking-tighter group-hover:text-[#8B5CF6] transition-colors">
+                <h3 className="text-lg font-black uppercase tracking-tighter group-hover:text-hologram-indigo transition-colors hologram-heading">
                   {app.companyName}
                 </h3>
                 <p className="font-mono text-[10px] text-white/40 uppercase tracking-widest">
@@ -273,16 +273,17 @@ const SkillMatrix = memo(() => {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {skills.map((skill) => (
-          <div key={skill.label} className="border-[2px] border-white/10 bg-black p-4 group hover:border-white transition-all">
-            <div className="flex justify-between items-end mb-3">
-              <span className="font-mono text-[9px] font-black uppercase tracking-widest text-white/40 group-hover:text-white">{skill.label}</span>
+          <div key={skill.label} className="border border-hologram-border bg-hologram-glass/40 backdrop-blur-md p-4 group hover:border-hologram-cyan/50 transition-all rounded-xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-hologram-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="flex justify-between items-end mb-3 relative z-10">
+              <span className="font-mono text-[9px] font-bold uppercase tracking-widest text-white/40 group-hover:text-hologram-cyan">{skill.label}</span>
               <span className="font-mono text-[10px] text-white/20">{skill.level}%</span>
             </div>
-            <div className="h-2 bg-white/5 relative overflow-hidden">
+            <div className="h-1.5 bg-white/5 relative rounded-full overflow-hidden relative z-10">
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: `${skill.level}%` }}
-                className="h-full bg-white group-hover:bg-[#8B5CF6] transition-colors"
+                className="h-full bg-gradient-to-r from-hologram-indigo to-hologram-cyan transition-all"
                 style={{ boxShadow: `0 0 10px ${skill.color}40` }}
               />
             </div>
@@ -310,15 +311,15 @@ const TacticalFeed = memo(() => {
             <span className="text-white/20 shrink-0">{ev.time}</span>
             <span className={cn(
                "uppercase transition-colors",
-               ev.type === 'ai' ? "text-[#8B5CF6]" : "text-white/60 group-hover:text-white"
+               ev.type === 'ai' ? "text-hologram-cyan" : "text-white/60 group-hover:text-white"
             )}>
                {`> ${ev.msg}`}
             </span>
           </div>
         ))}
-        <div className="pt-4 mt-4 border-t border-white/10">
-           <div className="flex items-center gap-2 text-[8px] text-[#22C55E] animate-pulse">
-              <div className="h-1 w-1 bg-[#22C55E]" />
+        <div className="pt-4 mt-4 border-t border-hologram-border">
+           <div className="flex items-center gap-2 text-[8px] text-hologram-cyan animate-pulse">
+              <div className="h-1 w-1 bg-hologram-cyan rounded-full" />
               <span>LISTENING_FOR_EVENTS...</span>
            </div>
         </div>
@@ -349,12 +350,12 @@ function SimpleStat({ label, value, color, tag }: {
   tag: string;
 }) {
   return (
-    <div className="p-6 border-r-[3px] border-white last:border-r-0 hover:bg-white/5 transition-colors group">
+    <div className="p-6 border-r border-hologram-border last:border-r-0 hover:bg-white/5 transition-colors group relative overflow-hidden">
       <div className="flex items-center justify-between mb-2">
-        <span className="font-mono text-[8px] text-white/20 uppercase tracking-[0.2em]">{label}</span>
-        <span className="font-mono text-[8px] text-[#8B5CF6]/40 uppercase tracking-[0.2em]">{tag}</span>
+        <span className="font-mono text-[8px] text-white/30 uppercase tracking-[0.2em]">{label}</span>
+        <span className="font-mono text-[8px] text-hologram-indigo/40 uppercase tracking-[0.2em]">{tag}</span>
       </div>
-      <div className={cn("text-3xl font-black tracking-tighter", color || "text-white")}>
+      <div className={cn("text-3xl font-black tracking-tighter transition-all group-hover:scale-105", color || "text-white")}>
         {value}
       </div>
     </div>
@@ -397,14 +398,15 @@ function getStatusBarColor(status: string): string {
 
 function EmptyDashboard({ onAdd }: { onAdd: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-32 text-center">
+    <div className="flex flex-col items-center justify-center py-32 text-center relative">
+      <div className="absolute inset-0 bg-radial-gradient from-hologram-cyan/5 via-transparent to-transparent blur-3xl -z-10" />
       <div className="relative mb-12">
-        <div className="h-24 w-24 border-[4px] border-white flex items-center justify-center shadow-[8px_8px_0px_#8B5CF6]">
-           <Plus className="h-12 w-12 text-white" />
+        <div className="h-24 w-24 border border-hologram-cyan/50 bg-hologram-cyan/10 flex items-center justify-center rounded-2xl shadow-[0_0_40px_rgba(6,182,212,0.2)] animate-pulse">
+           <Plus className="h-12 w-12 text-hologram-cyan" />
         </div>
       </div>
-      <h3 className="text-4xl font-black uppercase tracking-tighter">No_Data_Detected</h3>
-      <p className="font-mono text-xs text-white/40 mt-4 max-w-sm uppercase tracking-widest">
+      <h3 className="text-4xl font-black uppercase tracking-tighter hologram-heading">No_Data_Detected</h3>
+      <p className="font-mono text-xs text-white/60 mt-4 max-w-sm uppercase tracking-widest">
         The board is clear. Initialize your job hunt by deploying your first tracking node.
       </p>
       <MonolithButton onClick={onAdd} glitch className="mt-12 min-w-[300px]">
