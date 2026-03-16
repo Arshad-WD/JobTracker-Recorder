@@ -71,7 +71,16 @@ export function Header() {
                 className="w-full pl-10 h-10 bg-hologram-glass border border-hologram-border text-white font-mono text-xs focus:outline-none focus:border-hologram-cyan transition-all rounded-lg"
               />
             </div>
+            <button 
+              onClick={() => setCommandOpen(true)}
               className="px-3 h-10 border border-hologram-border text-white/40 hover:text-white hover:border-hologram-indigo transition-all font-mono text-[10px] flex items-center gap-2 rounded-lg"
+            >
+              <Command className="h-4 w-4" />
+              <span>SEARCH</span>
+              <kbd className="hidden sm:inline-flex h-5 items-center gap-1 rounded border border-white/10 bg-white/5 px-1.5 font-mono text-[8px] font-medium text-white/20 opacity-40">
+                K
+              </kbd>
+            </button>
           </div>
         </div>
 

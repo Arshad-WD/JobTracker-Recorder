@@ -1,17 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
-  Search,
-  ChevronRight,
   ChevronDown,
   Lightbulb,
-  CheckCircle2,
-  AlertCircle,
   HelpCircle,
-  MessageSquare,
   Gamepad2,
   Terminal,
 } from "lucide-react";

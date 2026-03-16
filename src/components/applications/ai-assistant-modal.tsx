@@ -8,10 +8,6 @@ import {
   FileText,
   Target,
   MessageSquare,
-  Mail,
-  Copy,
-  Check,
-  Loader2,
   AlertCircle,
   Settings,
 } from "lucide-react";
@@ -237,7 +233,7 @@ export function AIAssistantModal({
                     {TABS.find((t) => t.id === activeTab)?.label}_READY
                   </h3>
                   <p className="font-mono text-[10px] text-white/40 max-w-sm uppercase leading-relaxed tracking-wider">
-                    {TABS.find((t) => t.id === activeTab)?.description} // TARGET: {application.positionTitle}
+                    {TABS.find((t) => t.id === activeTab)?.description} {"//"} TARGET: {application.positionTitle}
                   </p>
                 </div>
                 <MonolithButton

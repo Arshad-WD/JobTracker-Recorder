@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useTransition } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, Search, X, Building2, Briefcase, User, Mail, PhoneCall } from "lucide-react";
+import { Phone, Search, X, Building2, Briefcase, User, PhoneCall } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getStatusColor, getStatusLabel, formatDate } from "@/lib/utils";

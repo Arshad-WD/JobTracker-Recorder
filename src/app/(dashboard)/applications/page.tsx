@@ -76,8 +76,6 @@ export default function ApplicationsPage() {
         app.companyName.toLowerCase().includes(q) ||
         app.positionTitle.toLowerCase().includes(q) ||
         app.recruiterName?.toLowerCase().includes(q) ||
-        app.recruiterEmail?.toLowerCase().includes(q) ||
-        app.recruiterPhone?.toLowerCase().includes(q) ||
         app.location?.toLowerCase().includes(q)
       );
     }

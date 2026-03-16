@@ -20,7 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { generateExtensionApiKey, deleteExtensionApiKey } from "@/server/actions";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface ExtensionSettingsProps {
   initialApiKey: string | null;

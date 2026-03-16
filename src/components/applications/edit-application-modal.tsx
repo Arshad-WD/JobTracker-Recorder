@@ -12,7 +12,6 @@ import {
   DollarSign,
   Link2,
   User,
-  Mail,
   Phone,
   Tag,
   FileText,

@@ -6,7 +6,6 @@ import {
   Bell,
   Smartphone,
   Clock,
-  Save,
   Loader2,
   Sparkles,
   Eye,

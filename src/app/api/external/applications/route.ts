@@ -44,7 +44,6 @@ export async function POST(request: Request) {
             data: {
                 ...validated,
                 userId: user.id,
-                recruiterEmail: validated.recruiterEmail || null,
                 jobLink: validated.jobLink || null,
             },
         });
